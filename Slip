@@ -2,7 +2,7 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/aaaaa
 
 local Window = Library:Window({
     Name = "Slip.wtf",
-    Size = UDim2.new(0, 650, 0, 650),
+    Size = UDim2.new(0, 650, 0, 700),
     FadeSpeed = 0.25
 })
 
@@ -39,11 +39,11 @@ AimbotSection:Toggle({
 })
 
 AimbotSection:Toggle({
-    Name = "Aimlock",
-    Flag = "AutoLock",
+    Name = "Sticky Aim",
+    Flag = "StickyAim",
     Default = false,
     Callback = function(Value)
-        Library:Notification("Aimlock", Value and "Enabled" or "Disabled", 2)
+        Library:Notification("Sticky Aim", Value and "Enabled" or "Disabled", 2)
     end
 })
 
@@ -451,6 +451,40 @@ VisualSection:Toggle({
     end
 })
 
+-- HITMARKER SECTION
+local HitmarkerSection = MainPage:Section({
+    Name = "Hitmarker",
+    Side = 2
+})
+
+HitmarkerSection:Toggle({
+    Name = "Hitmarker",
+    Flag = "Hitmarker",
+    Default = true,
+    Callback = function(Value)
+        Library:Notification("Hitmarker", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+HitmarkerSection:Toggle({
+    Name = "Damage Indicator",
+    Flag = "DamageIndicator",
+    Default = true,
+    Callback = function(Value)
+        Library:Notification("Damage Indicator", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+HitmarkerSection:Colorpicker({
+    Name = "Hitmarker Color",
+    Flag = "HitmarkerColor",
+    Default = Color3.fromRGB(255, 0, 0),
+    Alpha = 1,
+    Callback = function(Color, Alpha)
+        Library:Notification("Hitmarker Color", "Updated", 1)
+    end
+})
+
 -- ESP COLORS SECTION
 local ColorSection = MainPage:Section({
     Name = "ESP Colors",
@@ -522,12 +556,17 @@ local ESPBoxes = {}
 local ESPNameTags = {}
 local GroundTracers = {}
 local FlickActive = false
+local SelfESPCircle = nil
+
+-- Hitmarker Variables
+local LastHealth = {}
+local LastDamageTime = 0
 
 -- Aimbot Data
 local Aimbot = {
     Enabled = false,
     BlatantMode = false,
-    AutoLock = false,
+    StickyAim = false,
     HitPart = "Head",
     AirPart = "Head",
     FOV = 90,
@@ -568,7 +607,10 @@ local Aimbot = {
     HealthHighColor = Color3.fromRGB(0, 255, 0),
     HealthLowColor = Color3.fromRGB(255, 0, 0),
     TracerColor = Color3.fromRGB(255, 255, 255),
-    FOVColor = Color3.fromRGB(255, 0, 0)
+    FOVColor = Color3.fromRGB(255, 0, 0),
+    Hitmarker = true,
+    DamageIndicator = true,
+    HitmarkerColor = Color3.fromRGB(255, 0, 0)
 }
 
 -- Helper Functions
@@ -609,6 +651,170 @@ local function WorldToScreen(Point)
     return Vector2.new(Vec.X, Vec.Y), OnScreen
 end
 
+-- ============================================
+-- HITMARKER FUNCTION
+-- ============================================
+
+local function ShowHitmarker()
+    local flags = Library.Flags
+    if not flags.Hitmarker then return end
+    
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "Hitmarker"
+    ScreenGui.Parent = game:GetService("CoreGui")
+    
+    local hitColor = flags.HitmarkerColor or Color3.fromRGB(255, 0, 0)
+    local colorR = hitColor.R * 255
+    local colorG = hitColor.G * 255
+    local colorB = hitColor.B * 255
+    
+    -- Main container
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(0, 50, 0, 50)
+    container.Position = UDim2.new(0.5, -25, 0.5, -25)
+    container.BackgroundTransparency = 1
+    container.Parent = ScreenGui
+    
+    -- Line 1 (top-left to bottom-right)
+    local line1 = Instance.new("Frame")
+    line1.Size = UDim2.new(0, 35, 0, 4)
+    line1.Position = UDim2.new(0.5, -17.5, 0.5, -2)
+    line1.BackgroundColor3 = Color3.fromRGB(colorR, colorG, colorB)
+    line1.Rotation = 45
+    line1.Parent = container
+    
+    -- Line 2 (top-right to bottom-left)
+    local line2 = Instance.new("Frame")
+    line2.Size = UDim2.new(0, 35, 0, 4)
+    line2.Position = UDim2.new(0.5, -17.5, 0.5, -2)
+    line2.BackgroundColor3 = Color3.fromRGB(colorR, colorG, colorB)
+    line2.Rotation = -45
+    line2.Parent = container
+    
+    -- Animation: fade out and scale
+    local startTime = tick()
+    local duration = 0.3
+    
+    game:GetService("RunService").RenderStepped:Connect(function()
+        local elapsed = tick() - startTime
+        if elapsed >= duration then
+            ScreenGui:Destroy()
+            return
+        end
+        
+        local alpha = 1 - (elapsed / duration)
+        local scale = 1 + (elapsed * 2)
+        
+        line1.BackgroundTransparency = 1 - alpha
+        line2.BackgroundTransparency = 1 - alpha
+        container.Size = UDim2.new(0, 50 * scale, 0, 50 * scale)
+        container.Position = UDim2.new(0.5, -25 * scale, 0.5, -25 * scale)
+    end)
+end
+
+-- ============================================
+-- DAMAGE INDICATOR
+-- ============================================
+
+local function ShowDamageIndicator(Target, Damage)
+    local flags = Library.Flags
+    if not flags.DamageIndicator then return end
+    if not Target or not Target.Character then return end
+    
+    local Head = GetPart(Target, "Head")
+    if not Head then return end
+    
+    local ScreenPos, OnScreen = WorldToScreen(Head.Position)
+    if not OnScreen then return end
+    
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "DamageIndicator"
+    ScreenGui.Parent = game:GetService("CoreGui")
+    
+    local damageText = Instance.new("TextLabel")
+    damageText.Size = UDim2.new(0, 60, 0, 30)
+    damageText.Position = UDim2.new(0, ScreenPos.X - 30, 0, ScreenPos.Y - 50)
+    damageText.Text = "-" .. math.floor(Damage)
+    damageText.TextColor3 = Color3.fromRGB(255, 0, 0)
+    damageText.TextScaled = true
+    damageText.Font = Enum.Font.GothamBold
+    damageText.BackgroundTransparency = 1
+    damageText.TextStrokeTransparency = 0.3
+    damageText.Parent = ScreenGui
+    
+    -- Animate floating text
+    local startTime = tick()
+    local duration = 0.8
+    local startY = ScreenPos.Y - 50
+    
+    game:GetService("RunService").RenderStepped:Connect(function()
+        local elapsed = tick() - startTime
+        if elapsed >= duration then
+            ScreenGui:Destroy()
+            return
+        end
+        
+        local alpha = 1 - (elapsed / duration)
+        local newY = startY - (elapsed * 80)
+        
+        damageText.TextTransparency = 1 - alpha
+        damageText.Position = UDim2.new(0, ScreenPos.X - 30, 0, newY)
+    end)
+end
+
+-- Monitor damage to players
+local function SetupDamageDetection()
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer then
+            local Humanoid = GetHumanoid(Player)
+            if Humanoid then
+                LastHealth[Player] = Humanoid.Health
+                
+                Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+                    local oldHealth = LastHealth[Player] or Humanoid.Health
+                    local newHealth = Humanoid.Health
+                    
+                    if newHealth < oldHealth then
+                        local damage = oldHealth - newHealth
+                        if damage > 0 and damage < 1000 then
+                            ShowHitmarker()
+                            ShowDamageIndicator(Player, damage)
+                        end
+                    end
+                    
+                    LastHealth[Player] = newHealth
+                end)
+            end
+        end
+    end
+end
+
+-- Detect new players for damage detection
+Players.PlayerAdded:Connect(function(Player)
+    Player.CharacterAdded:Connect(function()
+        task.wait(0.5)
+        local Humanoid = GetHumanoid(Player)
+        if Humanoid then
+            LastHealth[Player] = Humanoid.Health
+            
+            Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+                local oldHealth = LastHealth[Player] or Humanoid.Health
+                local newHealth = Humanoid.Health
+                
+                if newHealth < oldHealth then
+                    local damage = oldHealth - newHealth
+                    if damage > 0 and damage < 1000 then
+                        ShowHitmarker()
+                        ShowDamageIndicator(Player, damage)
+                    end
+                end
+                
+                LastHealth[Player] = newHealth
+            end)
+        end
+    end)
+end)
+
 -- Get Correct Hit Part (Normal or Air)
 local function GetTargetPart(Target)
     local Char = GetCharacter(Target)
@@ -630,7 +836,7 @@ local function GetTargetPart(Target)
     return Part
 end
 
--- Calculate Angle to Target (distance from center in pixels)
+-- Calculate Angle to Target
 local function GetAngleToTarget(Target)
     local TargetPart = GetTargetPart(Target)
     if not TargetPart then return math.huge end
@@ -704,7 +910,7 @@ local function ApplyShake()
     return Vector2.new(ShakeX, ShakeY)
 end
 
--- Apply Stabilization (smooths out jitter)
+-- Apply Stabilization
 local function ApplyStabilization(CurrentAngle, TargetAngle)
     if not Aimbot.Stabilization then return TargetAngle end
     
@@ -718,7 +924,7 @@ local function ApplyStabilization(CurrentAngle, TargetAngle)
     return TargetAngle
 end
 
--- Get Best Target (closest to crosshair)
+-- Get Best Target
 local function GetBestTarget()
     local BestTarget = nil
     local BestAngle = Aimbot.FOV
@@ -743,19 +949,17 @@ local function GetBestTarget()
     return BestTarget, BestAngle
 end
 
--- Aim at Target (Camera manipulation)
+-- Aim at Target
 local function AimAtTarget(Target)
     local TargetPart = GetTargetPart(Target)
     if not TargetPart then return end
     
     local TargetPos = TargetPart.Position
     
-    -- Apply Prediction
     if Aimbot.Prediction then
         TargetPos = PredictPosition(Target, TargetPos)
     end
     
-    -- Apply Shake
     local Shake = ApplyShake()
     TargetPos = TargetPos + Vector3.new(Shake.X, Shake.Y, 0)
     
@@ -766,24 +970,19 @@ local function AimAtTarget(Target)
     local TargetLook = TargetCF.LookVector
     local AngleDiff = math.deg(math.acos(math.clamp(CurrentLook:Dot(TargetLook), -1, 1)))
     
-    -- Apply Deadzone
     if AngleDiff < Aimbot.Deadzone then
         return
     end
     
-    -- Apply Stabilization
     local StabilizedAngle = ApplyStabilization(AngleDiff, AngleDiff)
     
-    -- Apply Smoothness
     local SmoothX = Aimbot.BlatantMode and 1 or Aimbot.SmoothnessX
     local SmoothY = Aimbot.BlatantMode and 1 or Aimbot.SmoothnessY
     local Alpha = math.min(1, (SmoothX + SmoothY) / 20)
     
     if Aimbot.BlatantMode then
-        -- Instant aim
         Camera.CFrame = TargetCF
     else
-        -- Smooth aim
         local NewCF = CurrentCF:Lerp(TargetCF, Alpha / 10)
         Camera.CFrame = NewCF
     end
@@ -874,7 +1073,7 @@ local function UpdateFOVCircle()
     end
 end
 
--- Create Head ESP (2D Circle)
+-- Head ESP
 local function UpdateHeadESP()
     if not Aimbot.HeadESP then
         for _, Circle in pairs(HeadESPCircles) do
@@ -913,6 +1112,7 @@ local function UpdateHeadESP()
                     HeadESPCircles[Player].Circle.Position = UDim2.new(0, ScreenPos.X - Aimbot.HeadESPSize/2, 0, ScreenPos.Y - Aimbot.HeadESPSize/2)
                     HeadESPCircles[Player].Circle.BackgroundColor3 = Aimbot.HeadESPColor
                     HeadESPCircles[Player].Circle.Size = UDim2.new(0, Aimbot.HeadESPSize, 0, Aimbot.HeadESPSize)
+                    HeadESPCircles[Player].Circle.Visible = true
                 elseif HeadESPCircles[Player] then
                     HeadESPCircles[Player].Circle.Visible = false
                 end
@@ -921,7 +1121,7 @@ local function UpdateHeadESP()
     end
 end
 
--- Create ESP Box
+-- ESP Box
 local function UpdateESPBoxes()
     if not Aimbot.ESP or not Aimbot.ShowBox then
         for _, Box in pairs(ESPBoxes) do
@@ -955,7 +1155,7 @@ local function UpdateESPBoxes()
     end
 end
 
--- Create Name Tags (with Health and Distance)
+-- Name Tags
 local function UpdateNameTags()
     if not Aimbot.ESP or (not Aimbot.ShowName and not Aimbot.ShowHealth and not Aimbot.ShowDistance) then
         for _, Tag in pairs(ESPNameTags) do
@@ -1042,7 +1242,7 @@ local function UpdateNameTags()
     end
 end
 
--- Create Ground Tracers
+-- Ground Tracers
 local function UpdateGroundTracers()
     if not Aimbot.ShowGroundTracer then
         for _, Tracer in pairs(GroundTracers) do
@@ -1074,7 +1274,7 @@ local function UpdateGroundTracers()
     end
 end
 
--- Update Target Tracer (Line from center to target)
+-- Target Tracer
 local function UpdateTargetTracer()
     if not Aimbot.ShowTargetTracer or not CurrentTarget then
         if TargetLine then
@@ -1111,7 +1311,7 @@ local function UpdateTargetTracer()
     end
 end
 
--- Self ESP (show your own head)
+-- Self ESP
 local function UpdateSelfESP()
     if not Aimbot.SelfESP then
         if SelfESPCircle then
@@ -1159,13 +1359,13 @@ local function CheckPerspective()
     return true
 end
 
--- Update all settings from UI
+-- Update settings
 local function UpdateSettings()
     local Flags = Library.Flags
     
     Aimbot.Enabled = Flags.Aimbot or false
     Aimbot.BlatantMode = Flags.BlatantMode or false
-    Aimbot.AutoLock = Flags.AutoLock or false
+    Aimbot.StickyAim = Flags.StickyAim or false
     Aimbot.HitPart = Flags.HitPart or "Head"
     Aimbot.AirPart = Flags.AirPart or "Head"
     Aimbot.FOV = Flags.FOVSlider or 90
@@ -1199,7 +1399,8 @@ local function UpdateSettings()
     Aimbot.ShowHealth = Flags.ShowHealth or false
     Aimbot.ShowDistance = Flags.ShowDistance or false
     Aimbot.TeamCheck = Flags.TeamCheck or false
-    Aimbot.TeamCheck = Flags.TeamCheck or false
+    Aimbot.Hitmarker = Flags.Hitmarker or false
+    Aimbot.DamageIndicator = Flags.DamageIndicator or false
     
     if Flags.FOVColor then
         Aimbot.FOVColor = Color3.fromRGB(Flags.FOVColor.R * 255, Flags.FOVColor.G * 255, Flags.FOVColor.B * 255)
@@ -1221,6 +1422,9 @@ local function UpdateSettings()
     end
     if Flags.HealthLowColor then
         Aimbot.HealthLowColor = Color3.fromRGB(Flags.HealthLowColor.R * 255, Flags.HealthLowColor.G * 255, Flags.HealthLowColor.B * 255)
+    end
+    if Flags.HitmarkerColor then
+        Aimbot.HitmarkerColor = Color3.fromRGB(Flags.HitmarkerColor.R * 255, Flags.HitmarkerColor.G * 255, Flags.HitmarkerColor.B * 255)
     end
     
     if Flags.FlickBotKey then
@@ -1251,6 +1455,39 @@ end
 -- Initialize
 local function Initialize()
     CreateFOVCircle()
+    SetupDamageDetection()
+    
+    -- Detect existing players
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer then
+            Player.CharacterAdded:Connect(function()
+                task.wait(0.5)
+                local Humanoid = GetHumanoid(Player)
+                if Humanoid then
+                    LastHealth[Player] = Humanoid.Health
+                    
+                    Humanoid:GetPropertyChangedSignal("Health"):Connect(function()
+                        local oldHealth = LastHealth[Player] or Humanoid.Health
+                        local newHealth = Humanoid.Health
+                        
+                        if newHealth < oldHealth then
+                            local damage = oldHealth - newHealth
+                            if damage > 0 and damage < 1000 then
+                                if Aimbot.Hitmarker then
+                                    ShowHitmarker()
+                                end
+                                if Aimbot.DamageIndicator then
+                                    ShowDamageIndicator(Player, damage)
+                                end
+                            end
+                        end
+                        
+                        LastHealth[Player] = newHealth
+                    end)
+                end
+            end)
+        end
+    end
     
     RunService.RenderStepped:Connect(function()
         UpdateSettings()
@@ -1272,7 +1509,7 @@ local function Initialize()
         if Aimbot.Enabled then
             local BestTarget, BestAngle = GetBestTarget()
             
-            if Aimbot.AutoLock and CurrentTarget and IsAlive(CurrentTarget) then
+            if Aimbot.StickyAim and CurrentTarget and IsAlive(CurrentTarget) then
                 BestTarget = CurrentTarget
             else
                 CurrentTarget = BestTarget
@@ -1295,4 +1532,4 @@ end
 
 Initialize()
 
-Library:Notification("Slip.wtf", "Loaded!", 3)
+Library:Notification("Slip.wtf", "Loaded! Hitmarker + Damage Indicator included", 3)
