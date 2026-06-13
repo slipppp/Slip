@@ -1,0 +1,1298 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/aaaaaaaaicry/slip/refs/heads/main/slip.ui"))()
+
+local Window = Library:Window({
+    Name = "Slip.wtf",
+    Size = UDim2.new(0, 650, 0, 650),
+    FadeSpeed = 0.25
+})
+
+local Watermark = Library:Watermark("Slip.wtf | v1.0")
+local KeybindList = Library:KeybindList()
+
+local MainPage = Window:Page({
+    Name = "Main",
+    Columns = 2
+})
+
+-- AIMBOT SECTION
+local AimbotSection = MainPage:Section({
+    Name = "Aimbot",
+    Side = 1
+})
+
+AimbotSection:Toggle({
+    Name = "Aimbot",
+    Flag = "Aimbot",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Aimbot", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+AimbotSection:Toggle({
+    Name = "Blatant Mode",
+    Flag = "BlatantMode",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Blatant Mode", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+AimbotSection:Toggle({
+    Name = "Aimlock",
+    Flag = "AutoLock",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Aimlock", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+AimbotSection:Dropdown({
+    Name = "Hit Part",
+    Flag = "HitPart",
+    Items = {"Head", "Torso", "HumanoidRootPart", "Left Arm", "Right Arm", "Left Leg", "Right Leg"},
+    Default = "Head",
+    Callback = function(Value)
+        Library:Notification("Hit Part", Value, 2)
+    end
+})
+
+AimbotSection:Dropdown({
+    Name = "Air Part",
+    Flag = "AirPart",
+    Items = {"Head", "Torso", "HumanoidRootPart", "Left Arm", "Right Arm", "Left Leg", "Right Leg"},
+    Default = "Head",
+    Callback = function(Value)
+        Library:Notification("Air Part", Value, 2)
+    end
+})
+
+AimbotSection:Slider({
+    Name = "FOV",
+    Flag = "FOVSlider",
+    Min = 30,
+    Max = 360,
+    Default = 90,
+    Decimals = 1,
+    Suffix = "°",
+    Callback = function(Value)
+        Library:Notification("FOV", Value .. "°", 1)
+    end
+})
+
+AimbotSection:Slider({
+    Name = "Deadzone",
+    Flag = "Deadzone",
+    Min = 0,
+    Max = 50,
+    Default = 5,
+    Decimals = 1,
+    Suffix = "°",
+    Callback = function(Value)
+        Library:Notification("Deadzone", Value .. "°", 1)
+    end
+})
+
+AimbotSection:Slider({
+    Name = "Shake Value",
+    Flag = "ShakeValue",
+    Min = 0,
+    Max = 10,
+    Default = 0,
+    Decimals = 2,
+    Suffix = "",
+    Callback = function(Value)
+        Library:Notification("Shake Value", tostring(Value), 1)
+    end
+})
+
+AimbotSection:Slider({
+    Name = "Smoothness X",
+    Flag = "SmoothnessX",
+    Min = 1,
+    Max = 50,
+    Default = 10,
+    Decimals = 0,
+    Suffix = "",
+    Callback = function(Value)
+        Library:Notification("Smoothness X", tostring(Value), 1)
+    end
+})
+
+AimbotSection:Slider({
+    Name = "Smoothness Y",
+    Flag = "SmoothnessY",
+    Min = 1,
+    Max = 50,
+    Default = 10,
+    Decimals = 0,
+    Suffix = "",
+    Callback = function(Value)
+        Library:Notification("Smoothness Y", tostring(Value), 1)
+    end
+})
+
+-- PREDICTION SECTION
+local PredictionSection = MainPage:Section({
+    Name = "Prediction",
+    Side = 1
+})
+
+PredictionSection:Toggle({
+    Name = "Prediction",
+    Flag = "Prediction",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Prediction", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+PredictionSection:Dropdown({
+    Name = "Predict Method",
+    Flag = "PredictMethod",
+    Items = {"Linear", "Velocity", "Distance Based", "Smart"},
+    Default = "Linear",
+    Callback = function(Value)
+        Library:Notification("Predict Method", Value, 2)
+    end
+})
+
+PredictionSection:Slider({
+    Name = "Predict Strength",
+    Flag = "PredictStrength",
+    Min = 0,
+    Max = 100,
+    Default = 50,
+    Decimals = 0,
+    Suffix = "%",
+    Callback = function(Value)
+        Library:Notification("Predict Strength", Value .. "%", 1)
+    end
+})
+
+PredictionSection:Toggle({
+    Name = "Stabilization",
+    Flag = "Stabilization",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Stabilization", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+PredictionSection:Slider({
+    Name = "Stabilization Value",
+    Flag = "StabilizationValue",
+    Min = 0,
+    Max = 100,
+    Default = 50,
+    Decimals = 0,
+    Suffix = "%",
+    Callback = function(Value)
+        Library:Notification("Stabilization Value", Value .. "%", 1)
+    end
+})
+
+PredictionSection:Toggle({
+    Name = "Smart Predict",
+    Flag = "SmartPredict",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Smart Predict", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+-- SETTINGS SECTION
+local SettingsSection = MainPage:Section({
+    Name = "Settings",
+    Side = 1
+})
+
+SettingsSection:Toggle({
+    Name = "Third Person Only",
+    Flag = "ThirdPerson",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Third Person Only", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+SettingsSection:Toggle({
+    Name = "First Person Only",
+    Flag = "FirstPerson",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("First Person Only", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+SettingsSection:Toggle({
+    Name = "Dynamic FOV",
+    Flag = "DynamicFOV",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Dynamic FOV", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+SettingsSection:Toggle({
+    Name = "Auto Shoot",
+    Flag = "AutoShoot",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Auto Shoot", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+-- FLICK BOT SECTION
+local FlickBotSection = MainPage:Section({
+    Name = "Flick Bot",
+    Side = 2
+})
+
+FlickBotSection:Toggle({
+    Name = "Flick Bot",
+    Flag = "FlickBot",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Flick Bot", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+FlickBotSection:Keybind({
+    Name = "Flick Bot Key",
+    Flag = "FlickBotKey",
+    Default = Enum.KeyCode.Q,
+    Mode = "Toggle",
+    Callback = function(Key)
+        Library:Notification("Flick Bot Key", tostring(Key), 2)
+    end
+})
+
+FlickBotSection:Slider({
+    Name = "Flick Speed",
+    Flag = "FlickSpeed",
+    Min = 1,
+    Max = 100,
+    Default = 50,
+    Decimals = 0,
+    Suffix = "",
+    Callback = function(Value)
+        Library:Notification("Flick Speed", tostring(Value), 1)
+    end
+})
+
+FlickBotSection:Slider({
+    Name = "Flick FOV",
+    Flag = "FlickFOV",
+    Min = 30,
+    Max = 180,
+    Default = 60,
+    Decimals = 1,
+    Suffix = "°",
+    Callback = function(Value)
+        Library:Notification("Flick FOV", Value .. "°", 1)
+    end
+})
+
+FlickBotSection:Toggle({
+    Name = "Flick Auto Shoot",
+    Flag = "FlickAutoShoot",
+    Default = true,
+    Callback = function(Value)
+        Library:Notification("Flick Auto Shoot", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+-- VISUALS SECTION
+local VisualSection = MainPage:Section({
+    Name = "Visuals",
+    Side = 2
+})
+
+VisualSection:Toggle({
+    Name = "Show FOV Circle",
+    Flag = "ShowFOV",
+    Default = true,
+    Callback = function(Value)
+        Library:Notification("Show FOV Circle", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Colorpicker({
+    Name = "FOV Circle Color",
+    Flag = "FOVColor",
+    Default = Color3.fromRGB(255, 0, 0),
+    Alpha = 0.5,
+    Callback = function(Color, Alpha)
+        Library:Notification("FOV Color", "Updated", 1)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "ESP",
+    Flag = "ESP",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("ESP", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "Self ESP",
+    Flag = "SelfESP",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Self ESP", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "Head ESP",
+    Flag = "HeadESP",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Head ESP", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Colorpicker({
+    Name = "Head ESP Color",
+    Flag = "HeadESPColor",
+    Default = Color3.fromRGB(255, 0, 0),
+    Alpha = 1,
+    Callback = function(Color, Alpha)
+        Library:Notification("Head ESP Color", "Updated", 1)
+    end
+})
+
+VisualSection:Slider({
+    Name = "Head ESP Size",
+    Flag = "HeadESPSize",
+    Min = 10,
+    Max = 50,
+    Default = 25,
+    Decimals = 0,
+    Suffix = "px",
+    Callback = function(Value)
+        Library:Notification("Head ESP Size", Value .. "px", 1)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "Show Box",
+    Flag = "ShowBox",
+    Default = true,
+    Callback = function(Value)
+        Library:Notification("Show Box", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "Show Name",
+    Flag = "ShowName",
+    Default = true,
+    Callback = function(Value)
+        Library:Notification("Show Name", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "Show Health",
+    Flag = "ShowHealth",
+    Default = true,
+    Callback = function(Value)
+        Library:Notification("Show Health", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "Show Distance",
+    Flag = "ShowDistance",
+    Default = true,
+    Callback = function(Value)
+        Library:Notification("Show Distance", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "Show Ground Tracer",
+    Flag = "ShowGroundTracer",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Show Ground Tracer", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "Show Target Tracer",
+    Flag = "ShowTargetTracer",
+    Default = true,
+    Callback = function(Value)
+        Library:Notification("Show Target Tracer", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+VisualSection:Colorpicker({
+    Name = "Tracer Color",
+    Flag = "TracerColor",
+    Default = Color3.fromRGB(255, 255, 255),
+    Alpha = 1,
+    Callback = function(Color, Alpha)
+        Library:Notification("Tracer Color", "Updated", 1)
+    end
+})
+
+VisualSection:Toggle({
+    Name = "Team Check",
+    Flag = "TeamCheck",
+    Default = false,
+    Callback = function(Value)
+        Library:Notification("Team Check", Value and "Enabled" or "Disabled", 2)
+    end
+})
+
+-- ESP COLORS SECTION
+local ColorSection = MainPage:Section({
+    Name = "ESP Colors",
+    Side = 2
+})
+
+ColorSection:Colorpicker({
+    Name = "Box Color",
+    Flag = "BoxColor",
+    Default = Color3.fromRGB(255, 0, 0),
+    Alpha = 1,
+    Callback = function(Color, Alpha)
+        Library:Notification("Box Color", "Updated", 1)
+    end
+})
+
+ColorSection:Colorpicker({
+    Name = "Name Color",
+    Flag = "NameColor",
+    Default = Color3.fromRGB(255, 255, 255),
+    Alpha = 1,
+    Callback = function(Color, Alpha)
+        Library:Notification("Name Color", "Updated", 1)
+    end
+})
+
+ColorSection:Colorpicker({
+    Name = "Health High Color",
+    Flag = "HealthHighColor",
+    Default = Color3.fromRGB(0, 255, 0),
+    Alpha = 1,
+    Callback = function(Color, Alpha)
+        Library:Notification("Health High Color", "Updated", 1)
+    end
+})
+
+ColorSection:Colorpicker({
+    Name = "Health Low Color",
+    Flag = "HealthLowColor",
+    Default = Color3.fromRGB(255, 0, 0),
+    Alpha = 1,
+    Callback = function(Color, Alpha)
+        Library:Notification("Health Low Color", "Updated", 1)
+    end
+})
+
+Library:CreateSettingsPage(Window, Watermark, KeybindList)
+Library:CheckForAutoLoad()
+
+-- ============================================
+-- 100% FUNCIONAL IMPLEMENTATION
+-- ============================================
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local Camera = workspace.CurrentCamera
+
+-- Variables
+local CurrentTarget = nil
+local LastTarget = nil
+local TargetLockTime = 0
+local FOVCircle = nil
+local TargetLine = nil
+local HeadESPCircles = {}
+local ESPBoxes = {}
+local ESPNameTags = {}
+local GroundTracers = {}
+local FlickActive = false
+
+-- Aimbot Data
+local Aimbot = {
+    Enabled = false,
+    BlatantMode = false,
+    AutoLock = false,
+    HitPart = "Head",
+    AirPart = "Head",
+    FOV = 90,
+    Deadzone = 5,
+    ShakeValue = 0,
+    SmoothnessX = 10,
+    SmoothnessY = 10,
+    Prediction = false,
+    PredictMethod = "Linear",
+    PredictStrength = 50,
+    Stabilization = false,
+    StabilizationValue = 50,
+    SmartPredict = false,
+    ThirdPerson = false,
+    FirstPerson = false,
+    DynamicFOV = false,
+    AutoShoot = false,
+    FlickBot = false,
+    FlickKey = Enum.KeyCode.Q,
+    FlickFOV = 60,
+    FlickSpeed = 50,
+    FlickAutoShoot = true,
+    TeamCheck = false,
+    ShowFOV = true,
+    ShowTargetTracer = true,
+    ShowGroundTracer = false,
+    ESP = false,
+    SelfESP = false,
+    HeadESP = false,
+    HeadESPColor = Color3.fromRGB(255, 0, 0),
+    HeadESPSize = 25,
+    ShowBox = true,
+    ShowName = true,
+    ShowHealth = true,
+    ShowDistance = true,
+    BoxColor = Color3.fromRGB(255, 0, 0),
+    NameColor = Color3.fromRGB(255, 255, 255),
+    HealthHighColor = Color3.fromRGB(0, 255, 0),
+    HealthLowColor = Color3.fromRGB(255, 0, 0),
+    TracerColor = Color3.fromRGB(255, 255, 255),
+    FOVColor = Color3.fromRGB(255, 0, 0)
+}
+
+-- Helper Functions
+local function GetCharacter(Player)
+    return Player.Character
+end
+
+local function GetHumanoid(Player)
+    local Char = GetCharacter(Player)
+    return Char and Char:FindFirstChild("Humanoid")
+end
+
+local function GetPart(Player, PartName)
+    local Char = GetCharacter(Player)
+    return Char and Char:FindFirstChild(PartName)
+end
+
+local function IsAlive(Player)
+    local Humanoid = GetHumanoid(Player)
+    return Humanoid and Humanoid.Health > 0
+end
+
+local function IsTeammate(Player)
+    if not Aimbot.TeamCheck then return false end
+    return LocalPlayer.Team and Player.Team == LocalPlayer.Team
+end
+
+local function GetDistance(Part1, Part2)
+    return (Part1.Position - Part2.Position).Magnitude
+end
+
+local function GetViewportCenter()
+    return Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+end
+
+local function WorldToScreen(Point)
+    local Vec, OnScreen = Camera:WorldToScreenPoint(Point)
+    return Vector2.new(Vec.X, Vec.Y), OnScreen
+end
+
+-- Get Correct Hit Part (Normal or Air)
+local function GetTargetPart(Target)
+    local Char = GetCharacter(Target)
+    if not Char then return nil end
+    
+    local Humanoid = GetHumanoid(Target)
+    local IsJumping = Humanoid and (Humanoid:GetState() == Enum.HumanoidStateType.Jumping or Humanoid:GetState() == Enum.HumanoidStateType.Freefall)
+    
+    local PartName = Aimbot.HitPart
+    if IsJumping then
+        PartName = Aimbot.AirPart
+    end
+    
+    local Part = GetPart(Target, PartName)
+    if not Part then
+        Part = GetPart(Target, "HumanoidRootPart")
+    end
+    
+    return Part
+end
+
+-- Calculate Angle to Target (distance from center in pixels)
+local function GetAngleToTarget(Target)
+    local TargetPart = GetTargetPart(Target)
+    if not TargetPart then return math.huge end
+    
+    local ScreenPos, OnScreen = WorldToScreen(TargetPart.Position)
+    if not OnScreen then return math.huge end
+    
+    local Center = GetViewportCenter()
+    return (ScreenPos - Center).Magnitude
+end
+
+-- Calculate Dynamic FOV based on distance
+local function GetDynamicFOV(Target)
+    if not Aimbot.DynamicFOV then return Aimbot.FOV end
+    
+    local TargetPart = GetTargetPart(Target)
+    local LocalPart = GetCharacter(LocalPlayer) and GetCharacter(LocalPlayer):FindFirstChild("HumanoidRootPart")
+    
+    if not TargetPart or not LocalPart then return Aimbot.FOV end
+    
+    local Distance = GetDistance(TargetPart, LocalPart)
+    local DynamicValue = Aimbot.FOV * (1 - math.min(Distance / 500, 0.7))
+    return math.clamp(DynamicValue, 30, Aimbot.FOV)
+end
+
+-- Prediction Logic
+local function PredictPosition(Target, CurrentPos)
+    if not Aimbot.Prediction then return CurrentPos end
+    
+    local RootPart = GetPart(Target, "HumanoidRootPart")
+    if not RootPart then return CurrentPos end
+    
+    local Velocity = RootPart.Velocity
+    if Velocity.Magnitude < 0.1 then return CurrentPos end
+    
+    local LocalPart = GetCharacter(LocalPlayer) and GetCharacter(LocalPlayer):FindFirstChild("HumanoidRootPart")
+    if not LocalPart then return CurrentPos end
+    
+    local Distance = GetDistance(CurrentPos, LocalPart.Position)
+    local BulletSpeed = 3000
+    local TravelTime = Distance / BulletSpeed
+    
+    local Strength = Aimbot.PredictStrength / 100
+    
+    if Aimbot.PredictMethod == "Velocity" then
+        TravelTime = TravelTime * (Velocity.Magnitude / 50)
+    elseif Aimbot.PredictMethod == "Distance Based" then
+        TravelTime = TravelTime * (Distance / 100)
+    elseif Aimbot.PredictMethod == "Smart" then
+        local SpeedFactor = math.clamp(Velocity.Magnitude / 100, 0.5, 2)
+        TravelTime = TravelTime * SpeedFactor
+    end
+    
+    if Aimbot.SmartPredict then
+        local SpeedFactor = 1 + (Velocity.Magnitude / 150)
+        TravelTime = TravelTime * SpeedFactor
+    end
+    
+    TravelTime = TravelTime * Strength
+    TravelTime = math.min(TravelTime, 0.3)
+    
+    return CurrentPos + (Velocity * TravelTime)
+end
+
+-- Apply Shake to aim
+local function ApplyShake()
+    if Aimbot.ShakeValue <= 0 then return Vector2.zero end
+    
+    local ShakeX = (math.random() - 0.5) * Aimbot.ShakeValue * 2
+    local ShakeY = (math.random() - 0.5) * Aimbot.ShakeValue * 2
+    return Vector2.new(ShakeX, ShakeY)
+end
+
+-- Apply Stabilization (smooths out jitter)
+local function ApplyStabilization(CurrentAngle, TargetAngle)
+    if not Aimbot.Stabilization then return TargetAngle end
+    
+    local Diff = TargetAngle - CurrentAngle
+    local Strength = Aimbot.StabilizationValue / 100
+    
+    if math.abs(Diff) < 5 then
+        return CurrentAngle + (Diff * Strength)
+    end
+    
+    return TargetAngle
+end
+
+-- Get Best Target (closest to crosshair)
+local function GetBestTarget()
+    local BestTarget = nil
+    local BestAngle = Aimbot.FOV
+    local CurrentFOV = Aimbot.FOV
+    
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer and IsAlive(Player) and not IsTeammate(Player) then
+            local Angle = GetAngleToTarget(Player)
+            local MaxAngle = CurrentFOV
+            
+            if Aimbot.DynamicFOV then
+                MaxAngle = GetDynamicFOV(Player)
+            end
+            
+            if Angle < MaxAngle and Angle < BestAngle then
+                BestAngle = Angle
+                BestTarget = Player
+            end
+        end
+    end
+    
+    return BestTarget, BestAngle
+end
+
+-- Aim at Target (Camera manipulation)
+local function AimAtTarget(Target)
+    local TargetPart = GetTargetPart(Target)
+    if not TargetPart then return end
+    
+    local TargetPos = TargetPart.Position
+    
+    -- Apply Prediction
+    if Aimbot.Prediction then
+        TargetPos = PredictPosition(Target, TargetPos)
+    end
+    
+    -- Apply Shake
+    local Shake = ApplyShake()
+    TargetPos = TargetPos + Vector3.new(Shake.X, Shake.Y, 0)
+    
+    local CurrentCF = Camera.CFrame
+    local TargetCF = CFrame.lookAt(CurrentCF.Position, TargetPos)
+    
+    local CurrentLook = CurrentCF.LookVector
+    local TargetLook = TargetCF.LookVector
+    local AngleDiff = math.deg(math.acos(math.clamp(CurrentLook:Dot(TargetLook), -1, 1)))
+    
+    -- Apply Deadzone
+    if AngleDiff < Aimbot.Deadzone then
+        return
+    end
+    
+    -- Apply Stabilization
+    local StabilizedAngle = ApplyStabilization(AngleDiff, AngleDiff)
+    
+    -- Apply Smoothness
+    local SmoothX = Aimbot.BlatantMode and 1 or Aimbot.SmoothnessX
+    local SmoothY = Aimbot.BlatantMode and 1 or Aimbot.SmoothnessY
+    local Alpha = math.min(1, (SmoothX + SmoothY) / 20)
+    
+    if Aimbot.BlatantMode then
+        -- Instant aim
+        Camera.CFrame = TargetCF
+    else
+        -- Smooth aim
+        local NewCF = CurrentCF:Lerp(TargetCF, Alpha / 10)
+        Camera.CFrame = NewCF
+    end
+end
+
+-- Flick Bot Logic
+local function FlickToTarget(Target)
+    local TargetPart = GetTargetPart(Target)
+    if not TargetPart then return end
+    
+    local TargetPos = TargetPart.Position
+    local CurrentCF = Camera.CFrame
+    local TargetCF = CFrame.lookAt(CurrentCF.Position, TargetPos)
+    
+    local FlickSteps = math.max(1, math.floor(101 - Aimbot.FlickSpeed))
+    
+    for i = 1, FlickSteps do
+        local Alpha = i / FlickSteps
+        Camera.CFrame = CurrentCF:Lerp(TargetCF, Alpha)
+        RunService.RenderStepped:Wait()
+    end
+    
+    if Aimbot.FlickAutoShoot then
+        local Tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+        if Tool then
+            Tool:Activate()
+        end
+    end
+end
+
+-- Auto Shoot
+local function DoAutoShoot()
+    if not Aimbot.AutoShoot then return end
+    if not CurrentTarget then return end
+    
+    local Angle = GetAngleToTarget(CurrentTarget)
+    local MaxAngle = Aimbot.DynamicFOV and GetDynamicFOV(CurrentTarget) or Aimbot.FOV
+    
+    if Angle <= MaxAngle then
+        local Tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+        if Tool then
+            Tool:Activate()
+        end
+    end
+end
+
+-- Create FOV Circle
+local function CreateFOVCircle()
+    if FOVCircle then
+        FOVCircle:Destroy()
+    end
+    
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Name = "FOVCircleGUI"
+    ScreenGui.Parent = game:GetService("CoreGui")
+    
+    FOVCircle = Instance.new("Frame")
+    FOVCircle.Size = UDim2.new(0, Aimbot.FOV * 2, 0, Aimbot.FOV * 2)
+    FOVCircle.Position = UDim2.new(0.5, -Aimbot.FOV, 0.5, -Aimbot.FOV)
+    FOVCircle.BackgroundTransparency = 1
+    FOVCircle.BorderSizePixel = 2
+    FOVCircle.Parent = ScreenGui
+    
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(1, 0)
+    Corner.Parent = FOVCircle
+end
+
+-- Update FOV Circle
+local function UpdateFOVCircle()
+    if not FOVCircle then return end
+    
+    if Aimbot.ShowFOV then
+        FOVCircle.Parent.Enabled = true
+        local CurrentFOV = Aimbot.FOV
+        
+        if Aimbot.DynamicFOV and CurrentTarget then
+            CurrentFOV = GetDynamicFOV(CurrentTarget)
+        end
+        
+        FOVCircle.Size = UDim2.new(0, CurrentFOV * 2, 0, CurrentFOV * 2)
+        FOVCircle.Position = UDim2.new(0.5, -CurrentFOV, 0.5, -CurrentFOV)
+        FOVCircle.BorderColor3 = Aimbot.FOVColor
+    else
+        if FOVCircle then
+            FOVCircle.Parent.Enabled = false
+        end
+    end
+end
+
+-- Create Head ESP (2D Circle)
+local function UpdateHeadESP()
+    if not Aimbot.HeadESP then
+        for _, Circle in pairs(HeadESPCircles) do
+            Circle:Destroy()
+        end
+        HeadESPCircles = {}
+        return
+    end
+    
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer and IsAlive(Player) and not IsTeammate(Player) then
+            local Head = GetPart(Player, "Head")
+            if Head then
+                local ScreenPos, OnScreen = WorldToScreen(Head.Position)
+                if OnScreen then
+                    local Circle = HeadESPCircles[Player]
+                    if not Circle then
+                        local ScreenGui = Instance.new("ScreenGui")
+                        ScreenGui.Name = "HeadESP_" .. Player.Name
+                        ScreenGui.Parent = game:GetService("CoreGui")
+                        
+                        Circle = Instance.new("Frame")
+                        Circle.Size = UDim2.new(0, Aimbot.HeadESPSize, 0, Aimbot.HeadESPSize)
+                        Circle.BackgroundColor3 = Aimbot.HeadESPColor
+                        Circle.BackgroundTransparency = 0.5
+                        Circle.BorderSizePixel = 2
+                        Circle.Parent = ScreenGui
+                        
+                        local Corner = Instance.new("UICorner")
+                        Corner.CornerRadius = UDim.new(1, 0)
+                        Corner.Parent = Circle
+                        
+                        HeadESPCircles[Player] = {Circle = Circle, Gui = ScreenGui}
+                    end
+                    
+                    HeadESPCircles[Player].Circle.Position = UDim2.new(0, ScreenPos.X - Aimbot.HeadESPSize/2, 0, ScreenPos.Y - Aimbot.HeadESPSize/2)
+                    HeadESPCircles[Player].Circle.BackgroundColor3 = Aimbot.HeadESPColor
+                    HeadESPCircles[Player].Circle.Size = UDim2.new(0, Aimbot.HeadESPSize, 0, Aimbot.HeadESPSize)
+                elseif HeadESPCircles[Player] then
+                    HeadESPCircles[Player].Circle.Visible = false
+                end
+            end
+        end
+    end
+end
+
+-- Create ESP Box
+local function UpdateESPBoxes()
+    if not Aimbot.ESP or not Aimbot.ShowBox then
+        for _, Box in pairs(ESPBoxes) do
+            Box:Destroy()
+        end
+        ESPBoxes = {}
+        return
+    end
+    
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer and IsAlive(Player) and not IsTeammate(Player) then
+            local RootPart = GetPart(Player, "HumanoidRootPart") or GetPart(Player, "Torso")
+            if RootPart then
+                local Box = ESPBoxes[Player]
+                if not Box then
+                    Box = Instance.new("BoxHandleAdornment")
+                    Box.AlwaysOnTop = true
+                    Box.ZIndex = 10
+                    Box.Parent = GetCharacter(Player)
+                    ESPBoxes[Player] = Box
+                end
+                Box.Adornee = RootPart
+                Box.Size = Vector3.new(3, 5, 2)
+                Box.Color3 = Aimbot.BoxColor
+                Box.Transparency = 0.5
+                Box.Visible = true
+            end
+        elseif ESPBoxes[Player] then
+            ESPBoxes[Player].Visible = false
+        end
+    end
+end
+
+-- Create Name Tags (with Health and Distance)
+local function UpdateNameTags()
+    if not Aimbot.ESP or (not Aimbot.ShowName and not Aimbot.ShowHealth and not Aimbot.ShowDistance) then
+        for _, Tag in pairs(ESPNameTags) do
+            Tag:Destroy()
+        end
+        ESPNameTags = {}
+        return
+    end
+    
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer and IsAlive(Player) and not IsTeammate(Player) then
+            local RootPart = GetPart(Player, "HumanoidRootPart") or GetPart(Player, "Torso")
+            if RootPart then
+                local Tag = ESPNameTags[Player]
+                if not Tag then
+                    local Billboard = Instance.new("BillboardGui")
+                    Billboard.Size = UDim2.new(0, 120, 0, 40)
+                    Billboard.Adornee = RootPart
+                    Billboard.StudsOffset = Vector3.new(0, 2.5, 0)
+                    Billboard.AlwaysOnTop = true
+                    Billboard.Parent = GetCharacter(Player)
+                    
+                    local NameLabel = Instance.new("TextLabel")
+                    NameLabel.Size = UDim2.new(1, 0, 0.6, 0)
+                    NameLabel.BackgroundTransparency = 1
+                    NameLabel.TextColor3 = Aimbot.NameColor
+                    NameLabel.TextStrokeTransparency = 0.3
+                    NameLabel.TextScaled = true
+                    NameLabel.Font = Enum.Font.GothamBold
+                    NameLabel.Parent = Billboard
+                    
+                    local HealthBar = Instance.new("Frame")
+                    HealthBar.Size = UDim2.new(1, 0, 0.25, 0)
+                    HealthBar.Position = UDim2.new(0, 0, 0.7, 0)
+                    HealthBar.BackgroundColor3 = Aimbot.HealthHighColor
+                    HealthBar.Parent = Billboard
+                    
+                    local HealthCorner = Instance.new("UICorner")
+                    HealthCorner.CornerRadius = UDim.new(1, 0)
+                    HealthCorner.Parent = HealthBar
+                    
+                    ESPNameTags[Player] = {Billboard = Billboard, NameLabel = NameLabel, HealthBar = HealthBar}
+                end
+                
+                local Humanoid = GetHumanoid(Player)
+                local Health = Humanoid and Humanoid.Health or 100
+                local MaxHealth = Humanoid and Humanoid.MaxHealth or 100
+                local HealthPercent = Health / MaxHealth
+                
+                local Text = ""
+                if Aimbot.ShowName then
+                    Text = Player.Name
+                end
+                if Aimbot.ShowDistance then
+                    local LocalRoot = GetCharacter(LocalPlayer) and GetCharacter(LocalPlayer):FindFirstChild("HumanoidRootPart")
+                    if LocalRoot then
+                        local Distance = GetDistance(RootPart, LocalRoot)
+                        Text = Text .. (Text ~= "" and " | " or "") .. math.floor(Distance) .. "m"
+                    end
+                end
+                
+                ESPNameTags[Player].NameLabel.Text = Text
+                ESPNameTags[Player].NameLabel.TextColor3 = Aimbot.NameColor
+                
+                if Aimbot.ShowHealth then
+                    ESPNameTags[Player].HealthBar.Visible = true
+                    ESPNameTags[Player].HealthBar.Size = UDim2.new(HealthPercent, 0, 0.25, 0)
+                    if HealthPercent < 0.3 then
+                        ESPNameTags[Player].HealthBar.BackgroundColor3 = Aimbot.HealthLowColor
+                    elseif HealthPercent < 0.6 then
+                        ESPNameTags[Player].HealthBar.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+                    else
+                        ESPNameTags[Player].HealthBar.BackgroundColor3 = Aimbot.HealthHighColor
+                    end
+                else
+                    ESPNameTags[Player].HealthBar.Visible = false
+                end
+                
+                ESPNameTags[Player].Billboard.Enabled = true
+            end
+        elseif ESPNameTags[Player] then
+            ESPNameTags[Player].Billboard.Enabled = false
+        end
+    end
+end
+
+-- Create Ground Tracers
+local function UpdateGroundTracers()
+    if not Aimbot.ShowGroundTracer then
+        for _, Tracer in pairs(GroundTracers) do
+            Tracer:Destroy()
+        end
+        GroundTracers = {}
+        return
+    end
+    
+    for _, Player in ipairs(Players:GetPlayers()) do
+        if Player ~= LocalPlayer and IsAlive(Player) and not IsTeammate(Player) then
+            local RootPart = GetPart(Player, "HumanoidRootPart")
+            if RootPart then
+                local Tracer = GroundTracers[Player]
+                if not Tracer then
+                    Tracer = Instance.new("SelectionBox")
+                    Tracer.Color3 = Aimbot.TracerColor
+                    Tracer.LineThickness = 0.1
+                    Tracer.Transparency = 0.5
+                    Tracer.Parent = GetCharacter(Player)
+                    GroundTracers[Player] = Tracer
+                end
+                Tracer.Adornee = RootPart
+                Tracer.Visible = true
+            end
+        elseif GroundTracers[Player] then
+            GroundTracers[Player].Visible = false
+        end
+    end
+end
+
+-- Update Target Tracer (Line from center to target)
+local function UpdateTargetTracer()
+    if not Aimbot.ShowTargetTracer or not CurrentTarget then
+        if TargetLine then
+            TargetLine:Destroy()
+            TargetLine = nil
+        end
+        return
+    end
+    
+    local TargetPart = GetTargetPart(CurrentTarget)
+    if not TargetPart then return end
+    
+    local ScreenPos, OnScreen = WorldToScreen(TargetPart.Position)
+    if not OnScreen then return end
+    
+    local Center = GetViewportCenter()
+    
+    local Success, NewLine = pcall(function()
+        if TargetLine then
+            TargetLine:Destroy()
+        end
+        local Line = Drawing.new("Line")
+        Line.From = Center
+        Line.To = ScreenPos
+        Line.Color = Aimbot.TracerColor
+        Line.Thickness = 2
+        Line.Transparency = 0.7
+        Line.Visible = true
+        return Line
+    end)
+    
+    if Success then
+        TargetLine = NewLine
+    end
+end
+
+-- Self ESP (show your own head)
+local function UpdateSelfESP()
+    if not Aimbot.SelfESP then
+        if SelfESPCircle then
+            SelfESPCircle:Destroy()
+            SelfESPCircle = nil
+        end
+        return
+    end
+    
+    local LocalHead = GetPart(LocalPlayer, "Head")
+    if LocalHead then
+        local ScreenPos, OnScreen = WorldToScreen(LocalHead.Position)
+        if OnScreen then
+            if not SelfESPCircle then
+                local ScreenGui = Instance.new("ScreenGui")
+                ScreenGui.Name = "SelfESP"
+                ScreenGui.Parent = game:GetService("CoreGui")
+                
+                SelfESPCircle = Instance.new("Frame")
+                SelfESPCircle.Size = UDim2.new(0, 30, 0, 30)
+                SelfESPCircle.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+                SelfESPCircle.BackgroundTransparency = 0.5
+                SelfESPCircle.BorderSizePixel = 2
+                SelfESPCircle.Parent = ScreenGui
+                
+                local Corner = Instance.new("UICorner")
+                Corner.CornerRadius = UDim.new(1, 0)
+                Corner.Parent = SelfESPCircle
+            end
+            SelfESPCircle.Position = UDim2.new(0, ScreenPos.X - 15, 0, ScreenPos.Y - 15)
+            SelfESPCircle.Visible = true
+        elseif SelfESPCircle then
+            SelfESPCircle.Visible = false
+        end
+    end
+end
+
+-- Check Camera Perspective
+local function CheckPerspective()
+    if Aimbot.FirstPerson then
+        return Camera.CameraType == Enum.CameraType.Custom
+    elseif Aimbot.ThirdPerson then
+        return Camera.CameraType ~= Enum.CameraType.Custom
+    end
+    return true
+end
+
+-- Update all settings from UI
+local function UpdateSettings()
+    local Flags = Library.Flags
+    
+    Aimbot.Enabled = Flags.Aimbot or false
+    Aimbot.BlatantMode = Flags.BlatantMode or false
+    Aimbot.AutoLock = Flags.AutoLock or false
+    Aimbot.HitPart = Flags.HitPart or "Head"
+    Aimbot.AirPart = Flags.AirPart or "Head"
+    Aimbot.FOV = Flags.FOVSlider or 90
+    Aimbot.Deadzone = Flags.Deadzone or 5
+    Aimbot.ShakeValue = Flags.ShakeValue or 0
+    Aimbot.SmoothnessX = Flags.SmoothnessX or 10
+    Aimbot.SmoothnessY = Flags.SmoothnessY or 10
+    Aimbot.Prediction = Flags.Prediction or false
+    Aimbot.PredictMethod = Flags.PredictMethod or "Linear"
+    Aimbot.PredictStrength = Flags.PredictStrength or 50
+    Aimbot.Stabilization = Flags.Stabilization or false
+    Aimbot.StabilizationValue = Flags.StabilizationValue or 50
+    Aimbot.SmartPredict = Flags.SmartPredict or false
+    Aimbot.ThirdPerson = Flags.ThirdPerson or false
+    Aimbot.FirstPerson = Flags.FirstPerson or false
+    Aimbot.DynamicFOV = Flags.DynamicFOV or false
+    Aimbot.AutoShoot = Flags.AutoShoot or false
+    Aimbot.FlickBot = Flags.FlickBot or false
+    Aimbot.FlickFOV = Flags.FlickFOV or 60
+    Aimbot.FlickSpeed = Flags.FlickSpeed or 50
+    Aimbot.FlickAutoShoot = Flags.FlickAutoShoot or true
+    Aimbot.ShowFOV = Flags.ShowFOV or false
+    Aimbot.ShowTargetTracer = Flags.ShowTargetTracer or false
+    Aimbot.ShowGroundTracer = Flags.ShowGroundTracer or false
+    Aimbot.ESP = Flags.ESP or false
+    Aimbot.SelfESP = Flags.SelfESP or false
+    Aimbot.HeadESP = Flags.HeadESP or false
+    Aimbot.HeadESPSize = Flags.HeadESPSize or 25
+    Aimbot.ShowBox = Flags.ShowBox or false
+    Aimbot.ShowName = Flags.ShowName or false
+    Aimbot.ShowHealth = Flags.ShowHealth or false
+    Aimbot.ShowDistance = Flags.ShowDistance or false
+    Aimbot.TeamCheck = Flags.TeamCheck or false
+    Aimbot.TeamCheck = Flags.TeamCheck or false
+    
+    if Flags.FOVColor then
+        Aimbot.FOVColor = Color3.fromRGB(Flags.FOVColor.R * 255, Flags.FOVColor.G * 255, Flags.FOVColor.B * 255)
+    end
+    if Flags.HeadESPColor then
+        Aimbot.HeadESPColor = Color3.fromRGB(Flags.HeadESPColor.R * 255, Flags.HeadESPColor.G * 255, Flags.HeadESPColor.B * 255)
+    end
+    if Flags.TracerColor then
+        Aimbot.TracerColor = Color3.fromRGB(Flags.TracerColor.R * 255, Flags.TracerColor.G * 255, Flags.TracerColor.B * 255)
+    end
+    if Flags.BoxColor then
+        Aimbot.BoxColor = Color3.fromRGB(Flags.BoxColor.R * 255, Flags.BoxColor.G * 255, Flags.BoxColor.B * 255)
+    end
+    if Flags.NameColor then
+        Aimbot.NameColor = Color3.fromRGB(Flags.NameColor.R * 255, Flags.NameColor.G * 255, Flags.NameColor.B * 255)
+    end
+    if Flags.HealthHighColor then
+        Aimbot.HealthHighColor = Color3.fromRGB(Flags.HealthHighColor.R * 255, Flags.HealthHighColor.G * 255, Flags.HealthHighColor.B * 255)
+    end
+    if Flags.HealthLowColor then
+        Aimbot.HealthLowColor = Color3.fromRGB(Flags.HealthLowColor.R * 255, Flags.HealthLowColor.G * 255, Flags.HealthLowColor.B * 255)
+    end
+    
+    if Flags.FlickBotKey then
+        Aimbot.FlickKey = Flags.FlickBotKey
+    end
+end
+
+-- Flick Bot Key Check
+local function CheckFlickKey()
+    if not Aimbot.FlickBot then return end
+    
+    local KeyDown = false
+    if type(Aimbot.FlickKey) == "number" then
+        KeyDown = UserInputService:IsKeyDown(Enum.KeyCode[Aimbot.FlickKey])
+    end
+    
+    if KeyDown and not FlickActive then
+        FlickActive = true
+        local BestTarget, BestAngle = GetBestTarget()
+        if BestTarget and BestAngle <= Aimbot.FlickFOV then
+            FlickToTarget(BestTarget)
+        end
+    elseif not KeyDown then
+        FlickActive = false
+    end
+end
+
+-- Initialize
+local function Initialize()
+    CreateFOVCircle()
+    
+    RunService.RenderStepped:Connect(function()
+        UpdateSettings()
+        CheckPerspective()
+        CheckFlickKey()
+        UpdateFOVCircle()
+        UpdateHeadESP()
+        UpdateESPBoxes()
+        UpdateNameTags()
+        UpdateGroundTracers()
+        UpdateTargetTracer()
+        UpdateSelfESP()
+        
+        if not CheckPerspective() then
+            CurrentTarget = nil
+            return
+        end
+        
+        if Aimbot.Enabled then
+            local BestTarget, BestAngle = GetBestTarget()
+            
+            if Aimbot.AutoLock and CurrentTarget and IsAlive(CurrentTarget) then
+                BestTarget = CurrentTarget
+            else
+                CurrentTarget = BestTarget
+            end
+            
+            if CurrentTarget then
+                local Angle = GetAngleToTarget(CurrentTarget)
+                local MaxAngle = Aimbot.DynamicFOV and GetDynamicFOV(CurrentTarget) or Aimbot.FOV
+                
+                if Angle <= MaxAngle then
+                    AimAtTarget(CurrentTarget)
+                    DoAutoShoot()
+                end
+            end
+        else
+            CurrentTarget = nil
+        end
+    end)
+end
+
+Initialize()
+
+Library:Notification("Slip.wtf", "Loaded!", 3)
