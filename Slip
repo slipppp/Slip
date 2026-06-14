@@ -10,23 +10,21 @@ local Watermark = Library:Watermark("Slip.wtf | v1.0")
 local KeybindList = Library:KeybindList()
 
 -- ============================================
--- MAIN PAGE
+-- MAIN PAGE (AIMBOT)
 -- ============================================
 local MainPage = Window:Page({
     Name = "Main",
-    Columns = 4
+    Columns = 3
 })
 
--- ============================================
 -- COLUNA 1: AIMBOT
--- ============================================
 local AimbotSection = MainPage:Section({
     Name = "Aimbot",
     Side = 1
 })
 
 AimbotSection:Toggle({
-    Name = "Enabled",
+    Name = "Aimbot",
     Flag = "AimbotEnabled",
     Default = false
 })
@@ -45,22 +43,10 @@ AimbotSection:Dropdown({
     Default = "Head"
 })
 
-AimbotSection:Toggle({
-    Name = "Blatant Mode (Instant Lock)",
-    Flag = "BlatantMode",
-    Default = false
-})
-
-AimbotSection:Toggle({
-    Name = "Sticky Aim",
-    Flag = "StickyAim",
-    Default = false
-})
-
 AimbotSection:Slider({
     Name = "FOV",
     Flag = "FOV",
-    Min = 0,
+    Min = 30,
     Max = 360,
     Default = 90,
     Decimals = 1,
@@ -72,13 +58,13 @@ AimbotSection:Slider({
     Flag = "Deadzone",
     Min = 0,
     Max = 50,
-    Default = 0,
+    Default = 5,
     Decimals = 1,
     Suffix = "°"
 })
 
 AimbotSection:Slider({
-    Name = "Shake Value",
+    Name = "Shake",
     Flag = "ShakeValue",
     Min = 0,
     Max = 10,
@@ -87,166 +73,80 @@ AimbotSection:Slider({
     Suffix = ""
 })
 
--- ============================================
 -- COLUNA 2: SMOOTHNESS
--- ============================================
 local SmoothnessSection = MainPage:Section({
     Name = "Smoothness",
     Side = 2
 })
 
 SmoothnessSection:Slider({
-    Name = "Smoothness X",
-    Flag = "SmoothnessX",
-    Min = 1,
-    Max = 50,
-    Default = 3,
-    Decimals = 1,
-    Suffix = ""
-})
-
-SmoothnessSection:Slider({
-    Name = "Smoothness Y",
-    Flag = "SmoothnessY",
-    Min = 1,
-    Max = 50,
-    Default = 3,
-    Decimals = 1,
-    Suffix = ""
-})
-
-SmoothnessSection:Slider({
-    Name = "Smoothness Velocity",
-    Flag = "SmoothnessVelocity",
+    Name = "Smoothness",
+    Flag = "Smoothness",
     Min = 0,
-    Max = 100,
-    Default = 0,
-    Decimals = 1,
-    Suffix = ""
-})
-
-SmoothnessSection:Slider({
-    Name = "Velocity Power",
-    Flag = "VelocityPower",
-    Min = 1,
     Max = 10,
     Default = 3,
     Decimals = 1,
     Suffix = ""
 })
 
-SmoothnessSection:Dropdown({
-    Name = "Aimbot Type",
-    Flag = "AimbotType",
-    Items = {"Normal", "Legit", "Rage"},
-    Default = "Normal"
-})
-
--- ============================================
--- COLUNA 3: PREDICTION
--- ============================================
+-- COLUNA 3: PREDICTION + SETTINGS
 local PredictionSection = MainPage:Section({
     Name = "Prediction",
     Side = 3
 })
 
 PredictionSection:Toggle({
-    Name = "Enabled",
+    Name = "Prediction",
     Flag = "PredictionEnabled",
     Default = false
 })
 
 PredictionSection:Dropdown({
-    Name = "Prediction Method",
-    Flag = "PredictionMethod",
-    Items = {"Normal", "Velocity", "Distance Based", "Smart"},
+    Name = "Predict Method",
+    Flag = "PredictMethod",
+    Items = {"Normal", "Velocity", "Smart"},
     Default = "Normal"
 })
 
+PredictionSection:Slider({
+    Name = "Predict Strength",
+    Flag = "PredictStrength",
+    Min = 0,
+    Max = 100,
+    Default = 50,
+    Decimals = 0,
+    Suffix = "%"
+})
+
 PredictionSection:Toggle({
-    Name = "Stabilization",
-    Flag = "Stabilization",
+    Name = "Auto Shoot",
+    Flag = "AutoShoot",
     Default = false
 })
 
-PredictionSection:Slider({
-    Name = "Stabilization Value",
-    Flag = "StabilizationValue",
-    Min = 0,
-    Max = 100,
-    Default = 3,
-    Decimals = 1,
-    Suffix = ""
-})
-
--- ============================================
--- COLUNA 4: SETTINGS
--- ============================================
-local SettingsSection = MainPage:Section({
-    Name = "Settings",
-    Side = 4
-})
-
-SettingsSection:Toggle({
+PredictionSection:Toggle({
     Name = "Dynamic FOV",
     Flag = "DynamicFOV",
     Default = false
 })
 
-SettingsSection:Toggle({
-    Name = "Thirdperson",
-    Flag = "ThirdPerson",
-    Default = false
-})
-
-SettingsSection:Toggle({
-    Name = "Firstperson",
-    Flag = "FirstPerson",
-    Default = false
-})
-
-SettingsSection:Toggle({
-    Name = "Jump Offset",
-    Flag = "JumpOffset",
-    Default = false
-})
-
-SettingsSection:Slider({
-    Name = "Jump Value",
-    Flag = "JumpValue",
-    Min = 0,
-    Max = 50,
-    Default = 0,
-    Decimals = 1,
-    Suffix = ""
-})
-
-SettingsSection:Slider({
-    Name = "Fall Value",
-    Flag = "FallValue",
-    Min = 0,
-    Max = 50,
-    Default = 0,
-    Decimals = 1,
-    Suffix = ""
-})
-
-SettingsSection:Toggle({
+PredictionSection:Toggle({
     Name = "Target Tracer",
     Flag = "TargetTracer",
     Default = true
 })
 
 -- ============================================
--- VISUALS PAGE
+-- VISUALS PAGE (ESP)
 -- ============================================
 local VisualsPage = Window:Page({
     Name = "Visuals",
     Columns = 2
 })
 
+-- COLUNA 1: ESP CONFIG
 local ESPConfigSection = VisualsPage:Section({
-    Name = "ESP Configuration",
+    Name = "ESP",
     Side = 1
 })
 
@@ -304,6 +204,7 @@ ESPConfigSection:Toggle({
     Default = false
 })
 
+-- COLUNA 2: ESP CORES
 local ESPColorsSection = VisualsPage:Section({
     Name = "ESP Colors",
     Side = 2
@@ -377,7 +278,7 @@ ESP.HealthHighColor = Color3.fromRGB(0, 255, 0)
 ESP.HealthLowColor = Color3.fromRGB(255, 0, 0)
 
 -- ============================================
--- IMPLEMENTAÇÃO COMPLETA (R15/R6 + BLATANT GRUDA)
+-- IMPLEMENTAÇÃO
 -- ============================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -394,40 +295,24 @@ local Config = {
     AimbotEnabled = false,
     HitPart = "Head",
     AirPart = "Head",
-    BlatantMode = false,
-    StickyAim = false,
     FOV = 90,
-    Deadzone = 0,
+    Deadzone = 5,
     ShakeValue = 0,
-    SmoothnessX = 3,
-    SmoothnessY = 3,
-    SmoothnessVelocity = 0,
-    VelocityPower = 3,
-    AimbotType = "Normal",
+    Smoothness = 3,
     PredictionEnabled = false,
-    PredictionMethod = "Normal",
-    Stabilization = false,
-    StabilizationValue = 3,
+    PredictMethod = "Normal",
+    PredictStrength = 50,
+    AutoShoot = false,
     DynamicFOV = false,
-    ThirdPerson = false,
-    FirstPerson = false,
-    JumpOffset = false,
-    JumpValue = 0,
-    FallValue = 0,
     TargetTracer = true
 }
 
-local function GetCharacter(p) return p.Character end
-local function GetHumanoid(p) local c = GetCharacter(p) return c and c:FindFirstChild("Humanoid") end
-local function IsAlive(p) local h = GetHumanoid(p) return h and h.Health > 0 end
-
--- SUPORTE R15 E R6 - Função para encontrar a parte do corpo correta
+-- SUPORTE R15 E R6
 local function GetPart(p, partName)
-    local c = GetCharacter(p)
+    local c = p.Character
     if not c then return nil end
     
-    -- Mapeamento de partes para R15 e R6
-    local partMapping = {
+    local mapping = {
         Head = {"Head"},
         Torso = {"Torso", "UpperTorso"},
         HumanoidRootPart = {"HumanoidRootPart"},
@@ -437,13 +322,17 @@ local function GetPart(p, partName)
         ["Right Leg"] = {"Right Leg", "RightFoot"}
     }
     
-    local possibleNames = partMapping[partName] or {partName}
-    for _, name in ipairs(possibleNames) do
+    local names = mapping[partName] or {partName}
+    for _, name in ipairs(names) do
         local part = c:FindFirstChild(name)
         if part then return part end
     end
     return nil
 end
+
+local function GetCharacter(p) return p.Character end
+local function GetHumanoid(p) local c = GetCharacter(p) return c and c:FindFirstChild("Humanoid") end
+local function IsAlive(p) local h = GetHumanoid(p) return h and h.Health > 0 end
 
 local function IsJumping(p)
     local h = GetHumanoid(p)
@@ -452,27 +341,11 @@ local function IsJumping(p)
     return s == Enum.HumanoidStateType.Jumping or s == Enum.HumanoidStateType.Freefall
 end
 
-local function IsFalling(p)
-    local root = GetPart(p, "HumanoidRootPart")
-    if not root then return false end
-    return root.Velocity.Y < -10
-end
-
 local function GetTargetPart(t)
-    local c = GetCharacter(t)
-    if not c then return nil end
-    
     local name = Config.HitPart
     if IsJumping(t) and Config.AirPart ~= "None" then
         name = Config.AirPart
     end
-    
-    -- Suporte para "Random"
-    if name == "Random" then
-        local parts = {"Head", "Torso", "HumanoidRootPart", "Left Arm", "Right Arm", "Left Leg", "Right Leg"}
-        name = parts[math.random(1, #parts)]
-    end
-    
     local p = GetPart(t, name) or GetPart(t, "HumanoidRootPart") or GetPart(t, "Torso") or GetPart(t, "UpperTorso")
     return p
 end
@@ -496,7 +369,7 @@ end
 
 local function GetDistanceToTarget(t)
     local p = GetTargetPart(t)
-    local lp = GetCharacter(LocalPlayer) and (GetPart(LocalPlayer, "HumanoidRootPart") or GetPart(LocalPlayer, "Torso") or GetPart(LocalPlayer, "UpperTorso"))
+    local lp = GetPart(LocalPlayer, "HumanoidRootPart") or GetPart(LocalPlayer, "Torso") or GetPart(LocalPlayer, "UpperTorso")
     if not p or not lp then return 9999 end
     return (p.Position - lp.Position).Magnitude
 end
@@ -508,9 +381,7 @@ local function CreateFOVCircle()
     sg.Name = "FOVCircle"
     sg.Parent = game:GetService("CoreGui")
     FOVCircle = Instance.new("Frame")
-    FOVCircle.Size = UDim2.new(0, Config.FOV * 2, 0, Config.FOV * 2)
-    FOVCircle.Position = UDim2.new(0.5, -Config.FOV, 0.5, -Config.FOV)
-    FOVCircle.BackgroundTransparency = 0.5
+    FOVCircle.BackgroundTransparency = 0.7
     FOVCircle.BorderSizePixel = 2
     FOVCircle.BorderColor3 = Color3.fromRGB(255, 0, 0)
     FOVCircle.Parent = sg
@@ -535,29 +406,17 @@ local function PredictPosition(t, pos)
     if not Config.PredictionEnabled then return pos end
     local root = GetPart(t, "HumanoidRootPart") or GetPart(t, "Torso") or GetPart(t, "UpperTorso")
     if not root or root.Velocity.Magnitude < 0.1 then return pos end
-    local lp = GetCharacter(LocalPlayer)
-    if not lp then return pos end
     local lr = GetPart(LocalPlayer, "HumanoidRootPart") or GetPart(LocalPlayer, "Torso") or GetPart(LocalPlayer, "UpperTorso")
     if not lr then return pos end
     local dist = (pos - lr.Position).Magnitude
-    local travel = dist / 3000
-    if Config.PredictionMethod == "Velocity" then
+    local travel = dist / 3000 * (Config.PredictStrength / 100)
+    if Config.PredictMethod == "Velocity" then
         travel = travel * (root.Velocity.Magnitude / 50)
-    elseif Config.PredictionMethod == "Smart" then
+    elseif Config.PredictMethod == "Smart" then
         travel = travel * (1 + (root.Velocity.Magnitude / 100))
     end
     travel = math.min(travel, 0.3)
-    
-    local yOffset = 0
-    if Config.JumpOffset then
-        if IsJumping(t) then
-            yOffset = Config.JumpValue
-        elseif IsFalling(t) then
-            yOffset = -Config.FallValue
-        end
-    end
-    
-    return pos + (root.Velocity * travel) + Vector3.new(0, yOffset, 0)
+    return pos + (root.Velocity * travel)
 end
 
 -- Shake
@@ -566,21 +425,7 @@ local function ApplyShake()
     return Vector2.new((math.random() - 0.5) * Config.ShakeValue * 2, (math.random() - 0.5) * Config.ShakeValue * 2)
 end
 
--- Stabilization
-local lastAngles = {}
-local function ApplyStabilization(current, target)
-    if not Config.Stabilization then return target end
-    table.insert(lastAngles, target)
-    if #lastAngles > 10 then table.remove(lastAngles, 1) end
-    local sum = 0
-    for _, v in ipairs(lastAngles) do sum = sum + v end
-    local avg = sum / #lastAngles
-    local strength = Config.StabilizationValue / 100
-    return current + ((avg - current) * strength)
-end
-
--- AIM AT TARGET (COM BLATANT MODE GRUDANDO 100%)
-local lastAimTime = 0
+-- Aim at Target
 local function AimAtTarget(t)
     local p = GetTargetPart(t)
     if not p then return end
@@ -595,27 +440,14 @@ local function AimAtTarget(t)
     local target = CFrame.lookAt(cur.Position, pos)
     local diff = math.deg(math.acos(math.clamp(cur.LookVector:Dot(target.LookVector), -1, 1)))
     
-    -- Deadzone
     if diff < Config.Deadzone then return end
     
-    -- BLATANT MODE: GRUDA INSTANTANEAMENTE (sem suavidade, sem delay)
-    if Config.BlatantMode then
-        -- Mira instantânea - gruda 100% no alvo
+    if Config.Smoothness <= 0 then
         Camera.CFrame = target
-        return
+    else
+        local alpha = 1 / Config.Smoothness
+        Camera.CFrame = cur:Lerp(target, alpha / 10)
     end
-    
-    -- Modo normal com suavidade
-    local smoothX = Config.SmoothnessX
-    local smoothY = Config.SmoothnessY
-    if Config.SmoothnessVelocity > 0 and p.Velocity then
-        smoothX = smoothX + (p.Velocity.Magnitude / Config.VelocityPower)
-        smoothY = smoothY + (p.Velocity.Magnitude / Config.VelocityPower)
-    end
-    
-    local alpha = 1 / ((smoothX + smoothY) / 2)
-    local newCF = cur:Lerp(target, alpha / 10)
-    Camera.CFrame = newCF
 end
 
 -- Best Target
@@ -631,10 +463,19 @@ local function GetBestTarget()
             end
         end
     end
-    return best, bestAngle
+    return best
 end
 
--- Target Tracer (LINHA DO CENTRO ATÉ O ALVO)
+-- Auto Shoot
+local function DoAutoShoot()
+    if not Config.AutoShoot or not CurrentTarget then return end
+    if GetAngleToTarget(CurrentTarget) <= Config.FOV then
+        local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+        if tool then tool:Activate() end
+    end
+end
+
+-- Target Tracer
 local function UpdateTargetTracer()
     if not Config.TargetTracer or not CurrentTarget then
         if TargetLine then TargetLine:Destroy() end
@@ -658,7 +499,7 @@ local function UpdateTargetTracer()
     end)
 end
 
--- Self ESP (BOLA NA PRÓPRIA CABEÇA)
+-- Self ESP (bola na própria cabeça)
 local function UpdateSelfESP()
     local flags = Library.Flags
     if not flags.SelfESP then
@@ -691,7 +532,7 @@ local function UpdateSelfESP()
     end
 end
 
--- Head ESP (BOLA 2D NA CABEÇA DO INIMIGO)
+-- Head ESP (bola 2D na cabeça do inimigo)
 local function UpdateHeadESP()
     local flags = Library.Flags
     if not flags.HeadESP then
@@ -732,16 +573,6 @@ local function UpdateHeadESP()
     end
 end
 
--- Perspective
-local function CheckPerspective()
-    if Config.FirstPerson then
-        return Camera.CameraType == Enum.CameraType.Custom
-    elseif Config.ThirdPerson then
-        return Camera.CameraType ~= Enum.CameraType.Custom
-    end
-    return true
-end
-
 -- Update ESP Settings
 local function UpdateESPSettings()
     local f = Library.Flags
@@ -762,26 +593,15 @@ local function UpdateConfig()
     Config.AimbotEnabled = f.AimbotEnabled or false
     Config.HitPart = f.HitPart or "Head"
     Config.AirPart = f.AirPart or "Head"
-    Config.BlatantMode = f.BlatantMode or false
-    Config.StickyAim = f.StickyAim or false
     Config.FOV = f.FOV or 90
-    Config.Deadzone = f.Deadzone or 0
+    Config.Deadzone = f.Deadzone or 5
     Config.ShakeValue = f.ShakeValue or 0
-    Config.SmoothnessX = f.SmoothnessX or 3
-    Config.SmoothnessY = f.SmoothnessY or 3
-    Config.SmoothnessVelocity = f.SmoothnessVelocity or 0
-    Config.VelocityPower = f.VelocityPower or 3
-    Config.AimbotType = f.AimbotType or "Normal"
+    Config.Smoothness = f.Smoothness or 3
     Config.PredictionEnabled = f.PredictionEnabled or false
-    Config.PredictionMethod = f.PredictionMethod or "Normal"
-    Config.Stabilization = f.Stabilization or false
-    Config.StabilizationValue = f.StabilizationValue or 3
+    Config.PredictMethod = f.PredictMethod or "Normal"
+    Config.PredictStrength = f.PredictStrength or 50
+    Config.AutoShoot = f.AutoShoot or false
     Config.DynamicFOV = f.DynamicFOV or false
-    Config.ThirdPerson = f.ThirdPerson or false
-    Config.FirstPerson = f.FirstPerson or false
-    Config.JumpOffset = f.JumpOffset or false
-    Config.JumpValue = f.JumpValue or 0
-    Config.FallValue = f.FallValue or 0
     Config.TargetTracer = f.TargetTracer or false
 end
 
@@ -793,28 +613,20 @@ RunService.RenderStepped:Connect(function()
     UpdateConfig()
     UpdateESPSettings()
     UpdateFOVCircle()
+    UpdateTargetTracer()
     UpdateSelfESP()
     UpdateHeadESP()
-    UpdateTargetTracer()
-    
-    if not CheckPerspective() then
-        CurrentTarget = nil
-        return
-    end
     
     if Config.AimbotEnabled then
         local best = GetBestTarget()
-        if Config.StickyAim and CurrentTarget and IsAlive(CurrentTarget) then
-            best = CurrentTarget
-        else
-            CurrentTarget = best
-        end
+        CurrentTarget = best
         if CurrentTarget and GetAngleToTarget(CurrentTarget) <= Config.FOV then
             AimAtTarget(CurrentTarget)
+            DoAutoShoot()
         end
     else
         CurrentTarget = nil
     end
 end)
 
-Library:Notification("Slip.wtf", "Loaded!", 5)
+Library:Notification("Slip.wtf", "Loaded!", 3)
