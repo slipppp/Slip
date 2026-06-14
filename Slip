@@ -168,7 +168,7 @@ SettingsSection:Toggle({
 })
 
 -- ============================================
--- MOVEMENT PAGE (ANTI-AIM)
+-- MOVEMENT PAGE (ANTI-AIM + ANIMAÇÕES)
 -- ============================================
 local MovementPage = Window:Page({
     Name = "Movement",
@@ -262,6 +262,48 @@ YawSection:Slider({
     Decimals = 0,
     Suffix = "°"
 })
+
+-- ============================================
+-- ANIMAÇÕES SECTION
+-- ============================================
+local AnimationSection = MovementPage:Section({
+    Name = "Animations",
+    Side = 1
+})
+
+AnimationSection:Toggle({
+    Name = "Enable Animation",
+    Flag = "AnimationEnabled",
+    Default = false
+})
+
+AnimationSection:Dropdown({
+    Name = "Select Dance",
+    Flag = "SelectedDance",
+    Items = {"Holiday Dance", "T", "Shuffle", "Around Town", "Line Dance", "Floss Dance", "Keeping Time"},
+    Default = "Holiday Dance"
+})
+
+AnimationSection:Slider({
+    Name = "Animation Speed",
+    Flag = "AnimationSpeed",
+    Min = 0.1,
+    Max = 5,
+    Default = 1,
+    Decimals = 1,
+    Suffix = "x"
+})
+
+-- IDs das animações
+local DanceAnimations = {
+    ["Holiday Dance"] = 5938396308,
+    ["T"] = 3576719440,
+    ["Shuffle"] = 4391208058,
+    ["Around Town"] = 3576747102,
+    ["Line Dance"] = 4049646104,
+    ["Floss Dance"] = 5917570207,
+    ["Keeping Time"] = 4646306072
+}
 
 -- ============================================
 -- VISUALS PAGE
@@ -384,6 +426,8 @@ local HeadESPCircles = {}
 local PlayerHighlights = {}
 local SpinAngle = 0
 local JitterTimer = 0
+local CurrentAnimation = nil
+local AnimationTrack = nil
 
 local Config = {
     AimbotEnabled = false,
@@ -423,8 +467,49 @@ local Config = {
     YawMode = "None",
     YawJitter = 90,
     SpinSpeed = 180,
-    YawOffset = 0
+    YawOffset = 0,
+    -- Animation Config
+    AnimationEnabled = false,
+    SelectedDance = "Holiday Dance",
+    AnimationSpeed = 1
 }
+
+-- Função para tocar animação
+local function PlayAnimation()
+    local character = LocalPlayer.Character
+    if not character then return end
+    
+    local humanoid = character:FindFirstChild("Humanoid")
+    if not humanoid then return end
+    
+    -- Para animação atual
+    if AnimationTrack then
+        AnimationTrack:Stop()
+        AnimationTrack = nil
+    end
+    
+    if not Config.AnimationEnabled then return end
+    
+    local animId = DanceAnimations[Config.SelectedDance]
+    if not animId then return end
+    
+    -- Carrega e toca a animação
+    local anim = Instance.new("Animation")
+    anim.AnimationId = "rbxassetid://" .. animId
+    
+    AnimationTrack = humanoid:LoadAnimation(anim)
+    if AnimationTrack then
+        AnimationTrack:Play()
+        AnimationTrack:AdjustSpeed(Config.AnimationSpeed)
+    end
+end
+
+-- Atualizar velocidade da animação
+local function UpdateAnimationSpeed()
+    if AnimationTrack then
+        AnimationTrack:AdjustSpeed(Config.AnimationSpeed)
+    end
+end
 
 -- Rainbow color function
 local function rainbowColor()
@@ -513,6 +598,9 @@ local function UpdateAntiAim()
     local humanoid = character:FindFirstChild("Humanoid")
     if not humanoid then return end
     
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return end
+    
     -- PITCH (Olhar para cima/baixo)
     if Config.PitchEnabled then
         local pitch = 0
@@ -531,11 +619,10 @@ local function UpdateAntiAim()
             pitch = 0
         end
         
-        -- Aplicar pitch na câmera ou no personagem
-        local currentCF = character:GetPivot()
-        local lookVector = currentCF.LookVector
-        local newCF = CFrame.new(currentCF.Position, currentCF.Position + lookVector) * CFAngle(math.rad(pitch), 0, 0)
-        character:SetPrimaryPartCFrame(newCF)
+        -- Aplicar pitch
+        local currentCF = rootPart.CFrame
+        local newCF = CFrame.new(currentCF.Position) * CFrame.Angles(math.rad(pitch), 0, 0)
+        rootPart.CFrame = newCF
     end
     
     -- YAW (Rotação do corpo)
@@ -568,16 +655,11 @@ local function UpdateAntiAim()
         
         yaw = yaw + Config.YawOffset
         
-        -- Aplicar yaw na câmera ou no personagem
-        local currentCF = character:GetPivot()
+        -- Aplicar yaw
+        local currentCF = rootPart.CFrame
         local newCF = CFrame.new(currentCF.Position) * CFrame.Angles(0, math.rad(yaw), 0)
-        character:SetPrimaryPartCFrame(newCF)
+        rootPart.CFrame = newCF
     end
-end
-
--- Helper CFrame.Angles
-local function CFAngle(x, y, z)
-    return CFrame.Angles(x, y, z)
 end
 
 -- SUPORTE R15 E R6
@@ -879,6 +961,7 @@ end
 -- Update Config
 local function UpdateConfig()
     local f = Library.Flags
+    
     Config.AimbotEnabled = f.AimbotEnabled or false
     Config.HitPart = f.HitPart or "Head"
     Config.AirPart = f.AirPart or "Head"
@@ -918,10 +1001,34 @@ local function UpdateConfig()
     Config.YawJitter = f.YawJitter or 90
     Config.SpinSpeed = f.SpinSpeed or 180
     Config.YawOffset = f.YawOffset or 0
+    
+    -- Animation Config
+    local oldAnimation = Config.SelectedDance
+    Config.AnimationEnabled = f.AnimationEnabled or false
+    Config.SelectedDance = f.SelectedDance or "Holiday Dance"
+    Config.AnimationSpeed = f.AnimationSpeed or 1
+    
+    -- Verificar se mudou de animação
+    if oldAnimation ~= Config.SelectedDance or not AnimationTrack then
+        PlayAnimation()
+    else
+        UpdateAnimationSpeed()
+    end
+    
+    if not Config.AnimationEnabled and AnimationTrack then
+        AnimationTrack:Stop()
+        AnimationTrack = nil
+    end
 end
 
 -- Initialize
 CreateFOVCircle()
+
+-- Character Added para tocar animação automaticamente
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(0.5)
+    PlayAnimation()
+end)
 
 -- Main Loop
 RunService.RenderStepped:Connect(function()
