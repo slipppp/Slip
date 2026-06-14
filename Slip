@@ -2,7 +2,7 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/aaaaa
 
 local Window = Library:Window({
     Name = "Slip.wtf",
-    Size = UDim2.new(0, 1300, 0, 900),
+    Size = UDim2.new(0, 1400, 0, 950),
     FadeSpeed = 0.25
 })
 
@@ -10,11 +10,11 @@ local Watermark = Library:Watermark("Slip.wtf | v1.0")
 local KeybindList = Library:KeybindList()
 
 -- ============================================
--- MAIN PAGE (AIMBOT)
+-- MAIN PAGE
 -- ============================================
 local MainPage = Window:Page({
     Name = "Main",
-    Columns = 3
+    Columns = 4
 })
 
 -- COLUNA 1: AIMBOT
@@ -53,6 +53,19 @@ AimbotSection:Slider({
     Suffix = "°"
 })
 
+AimbotSection:Toggle({
+    Name = "FOV Enable",
+    Flag = "FOVEnable",
+    Default = true
+})
+
+AimbotSection:Colorpicker({
+    Name = "FOV Color",
+    Flag = "FOVColor",
+    Default = Color3.fromRGB(255, 0, 0),
+    Alpha = 1
+})
+
 AimbotSection:Slider({
     Name = "Deadzone",
     Flag = "Deadzone",
@@ -89,7 +102,7 @@ SmoothnessSection:Slider({
     Suffix = ""
 })
 
--- COLUNA 3: PREDICTION + SETTINGS
+-- COLUNA 3: PREDICTION
 local PredictionSection = MainPage:Section({
     Name = "Prediction",
     Side = 3
@@ -118,26 +131,140 @@ PredictionSection:Slider({
     Suffix = "%"
 })
 
-PredictionSection:Toggle({
+-- COLUNA 4: SETTINGS
+local SettingsSection = MainPage:Section({
+    Name = "Settings",
+    Side = 4
+})
+
+SettingsSection:Toggle({
     Name = "Auto Shoot",
     Flag = "AutoShoot",
     Default = false
 })
 
-PredictionSection:Toggle({
+SettingsSection:Toggle({
     Name = "Dynamic FOV",
     Flag = "DynamicFOV",
     Default = false
 })
 
-PredictionSection:Toggle({
+SettingsSection:Toggle({
     Name = "Target Tracer",
     Flag = "TargetTracer",
     Default = true
 })
 
+SettingsSection:Toggle({
+    Name = "Team Check",
+    Flag = "TeamCheck",
+    Default = false
+})
+
+SettingsSection:Toggle({
+    Name = "Wall Check",
+    Flag = "WallCheck",
+    Default = false
+})
+
 -- ============================================
--- VISUALS PAGE (ESP)
+-- MOVEMENT PAGE (ANTI-AIM)
+-- ============================================
+local MovementPage = Window:Page({
+    Name = "Movement",
+    Columns = 2
+})
+
+-- COLUNA 1: ANTI-AIM PITCH
+local PitchSection = MovementPage:Section({
+    Name = "Anti-Aim Pitch",
+    Side = 1
+})
+
+PitchSection:Toggle({
+    Name = "Enable Pitch",
+    Flag = "PitchEnabled",
+    Default = false
+})
+
+PitchSection:Dropdown({
+    Name = "Pitch Mode",
+    Flag = "PitchMode",
+    Items = {"Up", "Down", "Random", "Jitter", "None"},
+    Default = "None"
+})
+
+PitchSection:Slider({
+    Name = "Pitch Jitter Amount",
+    Flag = "PitchJitter",
+    Min = 0,
+    Max = 90,
+    Default = 45,
+    Decimals = 0,
+    Suffix = "°"
+})
+
+PitchSection:Slider({
+    Name = "Pitch Speed",
+    Flag = "PitchSpeed",
+    Min = 1,
+    Max = 20,
+    Default = 5,
+    Decimals = 0,
+    Suffix = ""
+})
+
+-- COLUNA 2: ANTI-AIM YAW
+local YawSection = MovementPage:Section({
+    Name = "Anti-Aim Yaw",
+    Side = 2
+})
+
+YawSection:Toggle({
+    Name = "Enable Yaw",
+    Flag = "YawEnabled",
+    Default = false
+})
+
+YawSection:Dropdown({
+    Name = "Yaw Mode",
+    Flag = "YawMode",
+    Items = {"Backwards", "Sideways", "Random", "Spin Bot", "Target", "Jitter", "None"},
+    Default = "None"
+})
+
+YawSection:Slider({
+    Name = "Yaw Jitter Amount",
+    Flag = "YawJitter",
+    Min = 0,
+    Max = 180,
+    Default = 90,
+    Decimals = 0,
+    Suffix = "°"
+})
+
+YawSection:Slider({
+    Name = "Spin Speed",
+    Flag = "SpinSpeed",
+    Min = 1,
+    Max = 360,
+    Default = 180,
+    Decimals = 0,
+    Suffix = "°/s"
+})
+
+YawSection:Slider({
+    Name = "Yaw Offset",
+    Flag = "YawOffset",
+    Min = -180,
+    Max = 180,
+    Default = 0,
+    Decimals = 0,
+    Suffix = "°"
+})
+
+-- ============================================
+-- VISUALS PAGE
 -- ============================================
 local VisualsPage = Window:Page({
     Name = "Visuals",
@@ -192,15 +319,19 @@ ESPConfigSection:Slider({
     Suffix = "px"
 })
 
-ESPConfigSection:Toggle({
-    Name = "Team Check",
-    Flag = "TeamCheck",
-    Default = false
+ESPConfigSection:Slider({
+    Name = "ESP Distance",
+    Flag = "ESPDistance",
+    Min = 0,
+    Max = 999999,
+    Default = 999999,
+    Decimals = 0,
+    Suffix = " studs"
 })
 
 ESPConfigSection:Toggle({
-    Name = "Wall Check",
-    Flag = "WallCheck",
+    Name = "Rainbow ESP",
+    Flag = "RainbowESP",
     Default = false
 })
 
@@ -211,74 +342,34 @@ local ESPColorsSection = VisualsPage:Section({
 })
 
 ESPColorsSection:Colorpicker({
-    Name = "Box Color",
-    Flag = "BoxColor",
-    Default = Color3.fromRGB(255, 255, 255),
-    Alpha = 1
-})
-
-ESPColorsSection:Colorpicker({
-    Name = "Box Outline Color",
-    Flag = "BoxOutlineColor",
-    Default = Color3.fromRGB(0, 0, 0),
-    Alpha = 1
-})
-
-ESPColorsSection:Colorpicker({
-    Name = "Name Color",
-    Flag = "NameColor",
-    Default = Color3.fromRGB(255, 255, 255),
-    Alpha = 1
-})
-
-ESPColorsSection:Colorpicker({
-    Name = "Health High Color",
-    Flag = "HealthHighColor",
-    Default = Color3.fromRGB(0, 255, 0),
-    Alpha = 1
-})
-
-ESPColorsSection:Colorpicker({
-    Name = "Health Low Color",
-    Flag = "HealthLowColor",
+    Name = "Outline Color",
+    Flag = "OutlineColor",
     Default = Color3.fromRGB(255, 0, 0),
     Alpha = 1
 })
 
 ESPColorsSection:Colorpicker({
-    Name = "Tracer Color",
-    Flag = "TracerColor",
+    Name = "Fill Color",
+    Flag = "FillColor",
     Default = Color3.fromRGB(255, 255, 255),
     Alpha = 1
+})
+
+ESPColorsSection:Slider({
+    Name = "Fill Transparency",
+    Flag = "FillTransparency",
+    Min = 0,
+    Max = 1,
+    Default = 0.5,
+    Decimals = 2,
+    Suffix = ""
 })
 
 Library:CreateSettingsPage(Window, Watermark, KeybindList)
 Library:CheckForAutoLoad()
 
 -- ============================================
--- ESP MASTER
--- ============================================
-local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/aaaaaaaaicry/slip/refs/heads/main/slip.esp.master"))()
-
-ESP.Enabled = false
-ESP.ShowBox = true
-ESP.ShowName = true
-ESP.ShowHealth = true
-ESP.ShowTracer = true
-ESP.ShowDistance = true
-ESP.Teamcheck = false
-ESP.WallCheck = false
-ESP.TracerPosition = "Bottom"
-ESP.TracerThickness = 2
-ESP.TracerColor = Color3.fromRGB(255, 255, 255)
-ESP.BoxColor = Color3.fromRGB(255, 255, 255)
-ESP.BoxOutlineColor = Color3.fromRGB(0, 0, 0)
-ESP.NameColor = Color3.fromRGB(255, 255, 255)
-ESP.HealthHighColor = Color3.fromRGB(0, 255, 0)
-ESP.HealthLowColor = Color3.fromRGB(255, 0, 0)
-
--- ============================================
--- IMPLEMENTAÇÃO
+-- IMPLEMENTAÇÃO COMPLETA
 -- ============================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -290,12 +381,17 @@ local FOVCircle = nil
 local TargetLine = nil
 local SelfESPCircle = nil
 local HeadESPCircles = {}
+local PlayerHighlights = {}
+local SpinAngle = 0
+local JitterTimer = 0
 
 local Config = {
     AimbotEnabled = false,
     HitPart = "Head",
     AirPart = "Head",
     FOV = 90,
+    FOVEnable = true,
+    FOVColor = Color3.fromRGB(255, 0, 0),
     Deadzone = 5,
     ShakeValue = 0,
     Smoothness = 3,
@@ -304,8 +400,185 @@ local Config = {
     PredictStrength = 50,
     AutoShoot = false,
     DynamicFOV = false,
-    TargetTracer = true
+    TargetTracer = true,
+    TeamCheck = false,
+    WallCheck = false,
+    ESPEnable = false,
+    SelfESP = false,
+    SelfESPColor = Color3.fromRGB(0, 255, 0),
+    HeadESP = false,
+    HeadESPColor = Color3.fromRGB(255, 0, 0),
+    HeadESPSize = 25,
+    ESPDistance = 999999,
+    RainbowESP = false,
+    OutlineColor = Color3.fromRGB(255, 0, 0),
+    FillColor = Color3.fromRGB(255, 255, 255),
+    FillTransparency = 0.5,
+    -- Anti-Aim Config
+    PitchEnabled = false,
+    PitchMode = "None",
+    PitchJitter = 45,
+    PitchSpeed = 5,
+    YawEnabled = false,
+    YawMode = "None",
+    YawJitter = 90,
+    SpinSpeed = 180,
+    YawOffset = 0
 }
+
+-- Rainbow color function
+local function rainbowColor()
+    local time = tick() * 3
+    return Color3.new(math.sin(time), math.sin(time + 2), math.sin(time + 4))
+end
+
+-- Update highlight colors
+local function UpdateHighlightColors()
+    for player, highlight in pairs(PlayerHighlights) do
+        if highlight and highlight.Parent then
+            if Config.RainbowESP then
+                highlight.OutlineColor = rainbowColor()
+            else
+                highlight.OutlineColor = Config.OutlineColor
+            end
+            highlight.FillColor = Config.FillColor
+            highlight.FillTransparency = Config.FillTransparency
+            highlight.Enabled = Config.ESPEnable
+        end
+    end
+end
+
+-- Create highlight for a player
+local function CreateHighlight(player)
+    if player == LocalPlayer then return end
+    
+    local highlight = Instance.new("Highlight")
+    highlight.OutlineColor = Config.OutlineColor
+    highlight.FillColor = Config.FillColor
+    highlight.FillTransparency = Config.FillTransparency
+    highlight.OutlineTransparency = 0
+    highlight.Enabled = Config.ESPEnable
+    
+    if player.Character then
+        highlight.Parent = player.Character
+    end
+    
+    player.CharacterAdded:Connect(function(character)
+        highlight.Parent = character
+    end)
+    
+    PlayerHighlights[player] = highlight
+end
+
+-- Remove highlight
+local function RemoveHighlight(player)
+    if PlayerHighlights[player] then
+        PlayerHighlights[player]:Destroy()
+        PlayerHighlights[player] = nil
+    end
+end
+
+-- Update all highlights
+local function UpdateHighlights()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            if Config.ESPEnable then
+                if not PlayerHighlights[player] then
+                    CreateHighlight(player)
+                end
+            else
+                RemoveHighlight(player)
+            end
+        end
+    end
+end
+
+-- ============================================
+-- ANTI-AIM FUNCTIONS
+-- ============================================
+local function GetTargetDirection()
+    if CurrentTarget and CurrentTarget.Character then
+        local targetPart = CurrentTarget.Character:FindFirstChild("HumanoidRootPart") or CurrentTarget.Character:FindFirstChild("Torso") or CurrentTarget.Character:FindFirstChild("UpperTorso")
+        if targetPart then
+            return (targetPart.Position - Camera.CFrame.Position).Unit
+        end
+    end
+    return nil
+end
+
+local function UpdateAntiAim()
+    local character = LocalPlayer.Character
+    if not character then return end
+    
+    local humanoid = character:FindFirstChild("Humanoid")
+    if not humanoid then return end
+    
+    -- PITCH (Olhar para cima/baixo)
+    if Config.PitchEnabled then
+        local pitch = 0
+        local mode = Config.PitchMode
+        
+        if mode == "Up" then
+            pitch = -90
+        elseif mode == "Down" then
+            pitch = 90
+        elseif mode == "Random" then
+            pitch = math.random(-90, 90)
+        elseif mode == "Jitter" then
+            JitterTimer = JitterTimer + (Config.PitchSpeed / 10)
+            pitch = math.sin(JitterTimer) * Config.PitchJitter
+        elseif mode == "None" then
+            pitch = 0
+        end
+        
+        -- Aplicar pitch na câmera ou no personagem
+        local currentCF = character:GetPivot()
+        local lookVector = currentCF.LookVector
+        local newCF = CFrame.new(currentCF.Position, currentCF.Position + lookVector) * CFAngle(math.rad(pitch), 0, 0)
+        character:SetPrimaryPartCFrame(newCF)
+    end
+    
+    -- YAW (Rotação do corpo)
+    if Config.YawEnabled then
+        local yaw = 0
+        local mode = Config.YawMode
+        
+        if mode == "Backwards" then
+            yaw = 180
+        elseif mode == "Sideways" then
+            yaw = 90
+        elseif mode == "Random" then
+            yaw = math.random(0, 360)
+        elseif mode == "Spin Bot" then
+            SpinAngle = SpinAngle + (Config.SpinSpeed / 60)
+            if SpinAngle > 360 then SpinAngle = SpinAngle - 360 end
+            yaw = SpinAngle
+        elseif mode == "Target" then
+            local targetDir = GetTargetDirection()
+            if targetDir then
+                local targetAngle = math.deg(math.atan2(targetDir.X, targetDir.Z))
+                yaw = targetAngle + 180
+            end
+        elseif mode == "Jitter" then
+            JitterTimer = JitterTimer + (Config.PitchSpeed / 10)
+            yaw = math.sin(JitterTimer) * Config.YawJitter
+        elseif mode == "None" then
+            yaw = 0
+        end
+        
+        yaw = yaw + Config.YawOffset
+        
+        -- Aplicar yaw na câmera ou no personagem
+        local currentCF = character:GetPivot()
+        local newCF = CFrame.new(currentCF.Position) * CFrame.Angles(0, math.rad(yaw), 0)
+        character:SetPrimaryPartCFrame(newCF)
+    end
+end
+
+-- Helper CFrame.Angles
+local function CFAngle(x, y, z)
+    return CFrame.Angles(x, y, z)
+end
 
 -- SUPORTE R15 E R6
 local function GetPart(p, partName)
@@ -334,11 +607,29 @@ local function GetCharacter(p) return p.Character end
 local function GetHumanoid(p) local c = GetCharacter(p) return c and c:FindFirstChild("Humanoid") end
 local function IsAlive(p) local h = GetHumanoid(p) return h and h.Health > 0 end
 
+local function IsTeammate(p)
+    if not Config.TeamCheck then return false end
+    return LocalPlayer.Team and p.Team == LocalPlayer.Team
+end
+
+local function IsVisible(part)
+    if not Config.WallCheck then return true end
+    local origin = Camera.CFrame.Position
+    local dir = (part.Position - origin).Unit
+    local ray = Ray.new(origin, dir * (part.Position - origin).Magnitude)
+    local hit, pos = workspace:FindPartOnRay(ray, LocalPlayer.Character)
+    return hit == part or hit == nil
+end
+
 local function IsJumping(p)
     local h = GetHumanoid(p)
     if not h then return false end
     local s = h:GetState()
     return s == Enum.HumanoidStateType.Jumping or s == Enum.HumanoidStateType.Freefall
+end
+
+local function GetDistance(p1, p2)
+    return (p1.Position - p2.Position).Magnitude
 end
 
 local function GetTargetPart(t)
@@ -383,7 +674,6 @@ local function CreateFOVCircle()
     FOVCircle = Instance.new("Frame")
     FOVCircle.BackgroundTransparency = 0.7
     FOVCircle.BorderSizePixel = 2
-    FOVCircle.BorderColor3 = Color3.fromRGB(255, 0, 0)
     FOVCircle.Parent = sg
     local c = Instance.new("UICorner")
     c.CornerRadius = UDim.new(1, 0)
@@ -392,6 +682,15 @@ end
 
 local function UpdateFOVCircle()
     if not FOVCircle then return end
+    
+    if not Config.FOVEnable then
+        FOVCircle.Visible = false
+        return
+    end
+    
+    FOVCircle.Visible = true
+    FOVCircle.BorderColor3 = Config.FOVColor
+    
     local fov = Config.FOV
     if Config.DynamicFOV and CurrentTarget then
         local dist = GetDistanceToTarget(CurrentTarget)
@@ -455,11 +754,14 @@ local function GetBestTarget()
     local best = nil
     local bestAngle = Config.FOV
     for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and IsAlive(p) then
-            local angle = GetAngleToTarget(p)
-            if angle < bestAngle then
-                bestAngle = angle
-                best = p
+        if p ~= LocalPlayer and IsAlive(p) and not IsTeammate(p) then
+            local dist = GetDistanceToTarget(p)
+            if dist <= Config.ESPDistance then
+                local angle = GetAngleToTarget(p)
+                if angle < bestAngle then
+                    bestAngle = angle
+                    best = p
+                end
             end
         end
     end
@@ -491,7 +793,7 @@ local function UpdateTargetTracer()
         local line = Drawing.new("Line")
         line.From = center
         line.To = pos
-        line.Color = Color3.fromRGB(255, 0, 0)
+        line.Color = Config.FOVColor
         line.Thickness = 2
         line.Transparency = 0.5
         line.Visible = true
@@ -499,10 +801,9 @@ local function UpdateTargetTracer()
     end)
 end
 
--- Self ESP (bola na própria cabeça)
+-- Self ESP
 local function UpdateSelfESP()
-    local flags = Library.Flags
-    if not flags.SelfESP then
+    if not Config.SelfESP then
         if SelfESPCircle then SelfESPCircle:Destroy() SelfESPCircle = nil end
         return
     end
@@ -524,7 +825,7 @@ local function UpdateSelfESP()
                 c.Parent = SelfESPCircle
             end
             SelfESPCircle.Position = UDim2.new(0, pos.X - 15, 0, pos.Y - 15)
-            SelfESPCircle.BackgroundColor3 = Color3.fromRGB(flags.SelfESPColor.R * 255, flags.SelfESPColor.G * 255, flags.SelfESPColor.B * 255)
+            SelfESPCircle.BackgroundColor3 = Config.SelfESPColor
             SelfESPCircle.Visible = true
         elseif SelfESPCircle then
             SelfESPCircle.Visible = false
@@ -532,59 +833,47 @@ local function UpdateSelfESP()
     end
 end
 
--- Head ESP (bola 2D na cabeça do inimigo)
+-- Head ESP
 local function UpdateHeadESP()
-    local flags = Library.Flags
-    if not flags.HeadESP then
+    if not Config.HeadESP then
         for _, c in pairs(HeadESPCircles) do if c then c:Destroy() end end
         HeadESPCircles = {}
         return
     end
     for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and IsAlive(p) then
-            local head = GetPart(p, "Head")
-            if head then
-                local pos, on = WorldToScreen(head.Position)
-                if on then
-                    local c = HeadESPCircles[p]
-                    if not c then
-                        local sg = Instance.new("ScreenGui")
-                        sg.Name = "HeadESP_" .. p.Name
-                        sg.Parent = game:GetService("CoreGui")
-                        c = Instance.new("Frame")
-                        c.Size = UDim2.new(0, flags.HeadESPSize, 0, flags.HeadESPSize)
-                        c.BackgroundTransparency = 0.5
-                        c.BorderSizePixel = 2
-                        c.Parent = sg
-                        local corner = Instance.new("UICorner")
-                        corner.CornerRadius = UDim.new(1, 0)
-                        corner.Parent = c
-                        HeadESPCircles[p] = c
+        if p ~= LocalPlayer and IsAlive(p) and not IsTeammate(p) then
+            local dist = GetDistanceToTarget(p)
+            if dist <= Config.ESPDistance then
+                local head = GetPart(p, "Head")
+                if head and IsVisible(head) then
+                    local pos, on = WorldToScreen(head.Position)
+                    if on then
+                        local c = HeadESPCircles[p]
+                        if not c then
+                            local sg = Instance.new("ScreenGui")
+                            sg.Name = "HeadESP_" .. p.Name
+                            sg.Parent = game:GetService("CoreGui")
+                            c = Instance.new("Frame")
+                            c.Size = UDim2.new(0, Config.HeadESPSize, 0, Config.HeadESPSize)
+                            c.BackgroundTransparency = 0.5
+                            c.BorderSizePixel = 2
+                            c.Parent = sg
+                            local corner = Instance.new("UICorner")
+                            corner.CornerRadius = UDim.new(1, 0)
+                            corner.Parent = c
+                            HeadESPCircles[p] = c
+                        end
+                        c.Position = UDim2.new(0, pos.X - Config.HeadESPSize/2, 0, pos.Y - Config.HeadESPSize/2)
+                        c.BackgroundColor3 = Config.HeadESPColor
+                        c.Size = UDim2.new(0, Config.HeadESPSize, 0, Config.HeadESPSize)
+                        c.Visible = true
+                    elseif HeadESPCircles[p] then
+                        HeadESPCircles[p].Visible = false
                     end
-                    c.Position = UDim2.new(0, pos.X - flags.HeadESPSize/2, 0, pos.Y - flags.HeadESPSize/2)
-                    c.BackgroundColor3 = Color3.fromRGB(flags.HeadESPColor.R * 255, flags.HeadESPColor.G * 255, flags.HeadESPColor.B * 255)
-                    c.Size = UDim2.new(0, flags.HeadESPSize, 0, flags.HeadESPSize)
-                    c.Visible = true
-                elseif HeadESPCircles[p] then
-                    HeadESPCircles[p].Visible = false
                 end
             end
         end
     end
-end
-
--- Update ESP Settings
-local function UpdateESPSettings()
-    local f = Library.Flags
-    ESP.Enabled = f.ESPEnable or false
-    ESP.Teamcheck = f.TeamCheck or false
-    ESP.WallCheck = f.WallCheck or false
-    if f.BoxColor then ESP.BoxColor = Color3.fromRGB(f.BoxColor.R * 255, f.BoxColor.G * 255, f.BoxColor.B * 255) end
-    if f.BoxOutlineColor then ESP.BoxOutlineColor = Color3.fromRGB(f.BoxOutlineColor.R * 255, f.BoxOutlineColor.G * 255, f.BoxOutlineColor.B * 255) end
-    if f.NameColor then ESP.NameColor = Color3.fromRGB(f.NameColor.R * 255, f.NameColor.G * 255, f.NameColor.B * 255) end
-    if f.HealthHighColor then ESP.HealthHighColor = Color3.fromRGB(f.HealthHighColor.R * 255, f.HealthHighColor.G * 255, f.HealthHighColor.B * 255) end
-    if f.HealthLowColor then ESP.HealthLowColor = Color3.fromRGB(f.HealthLowColor.R * 255, f.HealthLowColor.G * 255, f.HealthLowColor.B * 255) end
-    if f.TracerColor then ESP.TracerColor = Color3.fromRGB(f.TracerColor.R * 255, f.TracerColor.G * 255, f.TracerColor.B * 255) end
 end
 
 -- Update Config
@@ -594,6 +883,8 @@ local function UpdateConfig()
     Config.HitPart = f.HitPart or "Head"
     Config.AirPart = f.AirPart or "Head"
     Config.FOV = f.FOV or 90
+    Config.FOVEnable = f.FOVEnable or true
+    if f.FOVColor then Config.FOVColor = Color3.fromRGB(f.FOVColor.R * 255, f.FOVColor.G * 255, f.FOVColor.B * 255) end
     Config.Deadzone = f.Deadzone or 5
     Config.ShakeValue = f.ShakeValue or 0
     Config.Smoothness = f.Smoothness or 3
@@ -603,6 +894,30 @@ local function UpdateConfig()
     Config.AutoShoot = f.AutoShoot or false
     Config.DynamicFOV = f.DynamicFOV or false
     Config.TargetTracer = f.TargetTracer or false
+    Config.TeamCheck = f.TeamCheck or false
+    Config.WallCheck = f.WallCheck or false
+    Config.ESPEnable = f.ESPEnable or false
+    Config.SelfESP = f.SelfESP or false
+    if f.SelfESPColor then Config.SelfESPColor = Color3.fromRGB(f.SelfESPColor.R * 255, f.SelfESPColor.G * 255, f.SelfESPColor.B * 255) end
+    Config.HeadESP = f.HeadESP or false
+    if f.HeadESPColor then Config.HeadESPColor = Color3.fromRGB(f.HeadESPColor.R * 255, f.HeadESPColor.G * 255, f.HeadESPColor.B * 255) end
+    Config.HeadESPSize = f.HeadESPSize or 25
+    Config.ESPDistance = f.ESPDistance or 999999
+    Config.RainbowESP = f.RainbowESP or false
+    if f.OutlineColor then Config.OutlineColor = Color3.fromRGB(f.OutlineColor.R * 255, f.OutlineColor.G * 255, f.OutlineColor.B * 255) end
+    if f.FillColor then Config.FillColor = Color3.fromRGB(f.FillColor.R * 255, f.FillColor.G * 255, f.FillColor.B * 255) end
+    Config.FillTransparency = f.FillTransparency or 0.5
+    
+    -- Anti-Aim Config
+    Config.PitchEnabled = f.PitchEnabled or false
+    Config.PitchMode = f.PitchMode or "None"
+    Config.PitchJitter = f.PitchJitter or 45
+    Config.PitchSpeed = f.PitchSpeed or 5
+    Config.YawEnabled = f.YawEnabled or false
+    Config.YawMode = f.YawMode or "None"
+    Config.YawJitter = f.YawJitter or 90
+    Config.SpinSpeed = f.SpinSpeed or 180
+    Config.YawOffset = f.YawOffset or 0
 end
 
 -- Initialize
@@ -611,11 +926,13 @@ CreateFOVCircle()
 -- Main Loop
 RunService.RenderStepped:Connect(function()
     UpdateConfig()
-    UpdateESPSettings()
+    UpdateHighlightColors()
+    UpdateHighlights()
     UpdateFOVCircle()
     UpdateTargetTracer()
     UpdateSelfESP()
     UpdateHeadESP()
+    UpdateAntiAim()
     
     if Config.AimbotEnabled then
         local best = GetBestTarget()
