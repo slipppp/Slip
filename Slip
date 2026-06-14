@@ -1532,4 +1532,4 @@ end
 
 Initialize()
 
-Library:Notification("Slip.wtf", "Loaded! Hitmarker + Damage Indicator included", 3)
+Library:Notification("Slip.wtf", "Loaded!", 3)
