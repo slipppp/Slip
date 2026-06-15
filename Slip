@@ -1,826 +1,388 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/aaaaaaaaicry/slip/refs/heads/main/slip.ui"))()
+-- StellarHub UI Documentation
+-- the example is based on linorialib
+-- So if something is missing here, look at the linorialib example. Normally it will work too,
+-- because almost everything is based on linorialib, so big credit to violin-suzutsuki.
+-- it won't be open source because there are some config obfuscation option in the menu, so if it's open source,
+-- there's no point in including them, i'll maybe try to find a solution later for open source
+-- If you have any changes to make / bugs / add, please come to discord : /kqKdsN9hDP
 
-local Window = Library:Window({
-    Name = "Slip.wtf",
-    Size = UDim2.new(0, 1100, 0, 800),
-    FadeSpeed = 0.25
+local StellarHubMenu = loadstring(game:HttpGet("https://raw.githubusercontent.com/ImNotFatBitch/uimenu/main/StellarhubMenu"))()
+local Settings = loadstring(game:HttpGet("https://raw.githubusercontent.com/ImNotFatBitch/uimenu/main/StellarhubSettings"))()
+
+local Window = StellarHubMenu:Create({
+    Title = 'TestTitle',                    -- Window title
+    Size = UDim2.new(0, 400, 0, 250),       -- Window size (default: 700x550) (Not recommended, may break things)
+    Position = UDim2.new(0.5, 0, 0.5, 0),   -- Window position (default: center)
+    ShowOnCreate = true,                    -- Show menu immediately (default: true)
+    PerformanceMode = false,                -- Disable animations and some stuff (can be edited in the settings tab)
+    TweenSpeed = 0.3,                       -- Animation speed in seconds (can be edited in the settings tab)
+    UnloadTotal = true,                     -- disable ALL toggle etc before unload (default: true)
+ 
+    -- PlayerList options
+    PlayerListEnabled = true,               -- hides PlayerList toggle and set it on false
+ 
+    -- Watermark options
+    WatermarkEnabled = true,                -- hides entire Watermark section and disables watermark
+    WatermarkText = 'MyScript',             -- Custom watermark Title
+    CanChangeTitleWatermark = false,        -- hides textbox, players can't change title
+    ObfuscateConfig = false,                -- obfuscate the config file
+    MobileLogo = 'rbxassetid://14768967526',-- Mobile Logo Button
 })
+ 
+-- Or use defaults (empty config all on default)
+-- local Window = StellarHubMenu:Create()
 
-local Watermark = Library:Watermark("Slip.wtf | v1.0")
-local KeybindList = Library:KeybindList()
+local Tabs = {
+    Main = Window:AddTab('Main'),
+}
 
--- CRIAR PÁGINAS (TODAS AS ABAS)
-local MainPage = Window:Page({
-    Name = "Main",
-    Columns = 4
-})
+-- Initialize Settings tab
+-- Format: Settings:InitializeSettingsTab(Window, 'FolderName', 'GameName')
+local SettingsSections = Settings:InitializeSettingsTab(Window, 'MyScriptHub', 'ExampleScript')
+ 
+--[[
+    InitializeSettingsTab creates a Settings tab with:
+    - Config System, Theme System, Watermark, Keybind List etc
+ 
+    Config path examples:
+    - workspace/MyScriptHub/ExampleScript/settings/
+]]
 
-local MovementPage = Window:Page({
-    Name = "Movement",
-    Columns = 2
-})
+-- Groupbox and Tabbox inherit the same functions
+local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Groupbox')
 
-local VisualsPage = Window:Page({
-    Name = "Visuals",
-    Columns = 2
-})
+--[[
+    Groupbox:AddToggle
+    Arguments: Index, Options
 
-local PlayersPage = Window:Page({
-    Name = "Players",
-    Columns = 1
-})
-
--- ============================================
--- MAIN PAGE - AIMBOT
--- ============================================
-local AimbotSection = MainPage:Section({
-    Name = "Aimbot",
-    Side = 1
-})
-
-AimbotSection:Toggle({
-    Name = "Aimbot (Auto-Lock)",
-    Flag = "AimbotEnabled",
-    Default = false
-})
-
-AimbotSection:Dropdown({
-    Name = "Hit Part",
-    Flag = "HitPart",
-    Items = {"Head", "Torso", "HumanoidRootPart", "Left Arm", "Right Arm"},
-    Default = "Head"
-})
-
-AimbotSection:Dropdown({
-    Name = "Air Part",
-    Flag = "AirPart",
-    Items = {"Head", "Torso", "HumanoidRootPart", "None"},
-    Default = "Head"
-})
-
-AimbotSection:Slider({
-    Name = "FOV",
-    Flag = "FOV",
-    Min = 30,
-    Max = 360,
-    Default = 120,
-    Decimals = 1,
-    Suffix = "°"
-})
-
-AimbotSection:Toggle({
-    Name = "Show FOV",
-    Flag = "ShowFOV",
-    Default = true
-})
-
-AimbotSection:Colorpicker({
-    Name = "FOV Color",
-    Flag = "FOVColor",
-    Default = Color3.fromRGB(255, 0, 0),
-    Alpha = 0.5
-})
-
-AimbotSection:Slider({
-    Name = "Deadzone",
-    Flag = "Deadzone",
-    Min = 0,
-    Max = 50,
-    Default = 5,
-    Decimals = 1,
-    Suffix = "°"
-})
-
-AimbotSection:Slider({
-    Name = "Shake",
-    Flag = "ShakeValue",
-    Min = 0,
-    Max = 10,
-    Default = 0,
-    Decimals = 2
-})
-
--- SMOOTHNESS
-local SmoothnessSection = MainPage:Section({
-    Name = "Smoothness",
-    Side = 2
-})
-
-SmoothnessSection:Slider({
-    Name = "Smoothness X",
-    Flag = "SmoothnessX",
-    Min = 1,
-    Max = 30,
-    Default = 8,
-    Decimals = 1
-})
-
-SmoothnessSection:Slider({
-    Name = "Smoothness Y",
-    Flag = "SmoothnessY",
-    Min = 1,
-    Max = 30,
-    Default = 8,
-    Decimals = 1
-})
-
--- PREDICTION
-local PredictionSection = MainPage:Section({
-    Name = "Prediction",
-    Side = 3
-})
-
-PredictionSection:Toggle({
-    Name = "Prediction",
-    Flag = "PredictionEnabled",
-    Default = true
-})
-
-PredictionSection:Dropdown({
-    Name = "Predict Method",
-    Flag = "PredictMethod",
-    Items = {"Linear", "Velocity", "Distance", "Smart"},
-    Default = "Smart"
-})
-
-PredictionSection:Slider({
-    Name = "Predict Strength",
-    Flag = "PredictStrength",
-    Min = 0,
-    Max = 100,
-    Default = 65,
-    Decimals = 0,
-    Suffix = "%"
-})
-
--- SETTINGS
-local SettingsSection = MainPage:Section({
-    Name = "Settings",
-    Side = 4
-})
-
-SettingsSection:Toggle({
-    Name = "Auto Shoot",
-    Flag = "AutoShoot",
-    Default = false
-})
-
-SettingsSection:Toggle({
-    Name = "Sticky Aim",
-    Flag = "StickyAim",
-    Default = true
-})
-
-SettingsSection:Toggle({
-    Name = "Team Check",
-    Flag = "TeamCheck",
-    Default = false
-})
-
-SettingsSection:Toggle({
-    Name = "Wall Check",
-    Flag = "WallCheck",
-    Default = false
-})
-
--- ============================================
--- MOVEMENT PAGE
--- ============================================
-local MoveSection = MovementPage:Section({
-    Name = "Movement Hacks",
-    Side = 1
-})
-
-MoveSection:Toggle({
-    Name = "Fly",
-    Flag = "FlyEnabled",
-    Default = false
-})
-
-MoveSection:Slider({
-    Name = "Fly Speed",
-    Flag = "FlySpeed",
-    Min = 10,
-    Max = 200,
-    Default = 50,
-    Decimals = 0
-})
-
-MoveSection:Toggle({
-    Name = "Speed Hack",
-    Flag = "SpeedHackEnabled",
-    Default = false
-})
-
-MoveSection:Slider({
-    Name = "Walk Speed",
-    Flag = "WalkSpeed",
-    Min = 16,
-    Max = 350,
-    Default = 50,
-    Decimals = 0
-})
-
-MoveSection:Toggle({
-    Name = "Jump Power",
-    Flag = "JumpPowerEnabled",
-    Default = false
-})
-
-MoveSection:Slider({
-    Name = "Jump Power Value",
-    Flag = "JumpPowerValue",
-    Min = 50,
-    Max = 500,
-    Default = 100,
-    Decimals = 0
-})
-
-MoveSection:Toggle({
-    Name = "Noclip",
-    Flag = "NoclipEnabled",
-    Default = false
-})
-
-MoveSection:Toggle({
-    Name = "BHop",
-    Flag = "BHopEnabled",
-    Default = false
-})
-
--- ANTI-AIM
-local AntiAimSection = MovementPage:Section({
-    Name = "Anti-Aim",
-    Side = 2
-})
-
-AntiAimSection:Toggle({
-    Name = "Anti-Aim",
-    Flag = "AntiAimEnabled",
-    Default = false
-})
-
-AntiAimSection:Dropdown({
-    Name = "Pitch Mode",
-    Flag = "PitchMode",
-    Items = {"Up", "Down", "Jitter", "None"},
-    Default = "None"
-})
-
-AntiAimSection:Dropdown({
-    Name = "Yaw Mode",
-    Flag = "YawMode",
-    Items = {"Backwards", "Sideways", "Spin Bot", "Jitter", "None"},
-    Default = "None"
-})
-
-AntiAimSection:Slider({
-    Name = "Spin Speed",
-    Flag = "SpinSpeed",
-    Min = 90,
-    Max = 3600,
-    Default = 360,
-    Decimals = 0,
-    Suffix = "°/s"
-})
-
--- ============================================
--- VISUALS PAGE
--- ============================================
-local ESPConfigSection = VisualsPage:Section({
-    Name = "ESP",
-    Side = 1
-})
-
-ESPConfigSection:Toggle({
-    Name = "ESP Enable",
-    Flag = "ESPEnable",
-    Default = false
-})
-
-ESPConfigSection:Toggle({
-    Name = "Self ESP",
-    Flag = "SelfESP",
-    Default = false
-})
-
-ESPConfigSection:Colorpicker({
-    Name = "Self ESP Color",
-    Flag = "SelfESPColor",
-    Default = Color3.fromRGB(0, 255, 0),
-    Alpha = 1
-})
-
-ESPConfigSection:Toggle({
-    Name = "Head ESP",
-    Flag = "HeadESP",
-    Default = true
-})
-
-ESPConfigSection:Colorpicker({
-    Name = "Head ESP Color",
-    Flag = "HeadESPColor",
-    Default = Color3.fromRGB(255, 0, 0),
-    Alpha = 1
-})
-
-ESPConfigSection:Slider({
-    Name = "Head ESP Size",
-    Flag = "HeadESPSize",
-    Min = 10,
-    Max = 60,
-    Default = 25,
-    Decimals = 0,
-    Suffix = "px"
-})
-
-ESPConfigSection:Slider({
-    Name = "ESP Distance",
-    Flag = "ESPDistance",
-    Min = 0,
-    Max = 999999,
-    Default = 999999,
-    Decimals = 0,
-    Suffix = " studs"
-})
-
--- ESP COLORS
-local ESPColorsSection = VisualsPage:Section({
-    Name = "ESP Colors",
-    Side = 2
-})
-
-ESPColorsSection:Toggle({
-    Name = "Box ESP",
-    Flag = "BoxESP",
-    Default = true
-})
-
-ESPColorsSection:Colorpicker({
-    Name = "Box Color",
-    Flag = "BoxColor",
-    Default = Color3.fromRGB(255, 0, 0),
-    Alpha = 1
-})
-
-ESPColorsSection:Toggle({
-    Name = "Name ESP",
-    Flag = "NameESP",
-    Default = true
-})
-
-ESPColorsSection:Colorpicker({
-    Name = "Name Color",
-    Flag = "NameColor",
-    Default = Color3.fromRGB(255, 255, 255),
-    Alpha = 1
-})
-
-ESPColorsSection:Toggle({
-    Name = "Health Bar",
-    Flag = "HealthBar",
-    Default = true
-})
-
--- ============================================
--- PLAYERS PAGE
--- ============================================
-local PlayerControlSection = PlayersPage:Section({
-    Name = "Player Control",
-    Side = 1
-})
-
-PlayerControlSection:Button({
-    Name = "Refresh Player List",
-    Callback = function()
-        local players = {"None"}
-        for _, v in ipairs(game.Players:GetPlayers()) do
-            if v ~= game.Players.LocalPlayer then
-                table.insert(players, v.Name)
-            end
-        end
-        Library:Notification("Players", "List refreshed", 2)
-    end
-})
-
-PlayerControlSection:Button({
-    Name = "Teleport to Player",
-    Callback = function()
-        Library:Notification("Teleport", "Select a player first", 2)
-    end
-})
-
-PlayerControlSection:Button({
-    Name = "Bring Player",
-    Callback = function()
-        Library:Notification("Bring", "Select a player first", 2)
-    end
-})
-
--- ============================================
--- SALVAR CONFIGURAÇÕES
--- ============================================
-Library:CreateSettingsPage(Window, Watermark, KeybindList)
-Library:CheckForAutoLoad()
-
--- ============================================
--- IMPLEMENTAÇÃO DO AIMBOT AUTO-LOCK
--- ============================================
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
-local LocalPlayer = Players.LocalPlayer
-local Camera = workspace.CurrentCamera
-
--- Variáveis
-local CurrentTarget = nil
-local FOVCircle = nil
-local Flying = false
-local FlyBodyGyro = nil
-local FlyBodyVelocity = nil
-local SpinAngle = 0
-local JitterTimer = 0
-local HeadESPCircles = {}
-
--- Pegar configuração atual
-local function GetFlag(flagName)
-    local success, result = pcall(function()
-        return Library.Flags[flagName]
-    end)
-    if success then
-        return result
-    end
-    return nil
-end
-
-local function GetConfig()
-    return {
-        AimbotEnabled = GetFlag("AimbotEnabled") or false,
-        HitPart = GetFlag("HitPart") or "Head",
-        AirPart = GetFlag("AirPart") or "Head",
-        FOV = GetFlag("FOV") or 120,
-        ShowFOV = GetFlag("ShowFOV") or true,
-        FOVColor = GetFlag("FOVColor"),
-        Deadzone = GetFlag("Deadzone") or 5,
-        ShakeValue = GetFlag("ShakeValue") or 0,
-        SmoothnessX = GetFlag("SmoothnessX") or 8,
-        SmoothnessY = GetFlag("SmoothnessY") or 8,
-        PredictionEnabled = GetFlag("PredictionEnabled") or true,
-        PredictMethod = GetFlag("PredictMethod") or "Smart",
-        PredictStrength = GetFlag("PredictStrength") or 65,
-        AutoShoot = GetFlag("AutoShoot") or false,
-        StickyAim = GetFlag("StickyAim") or true,
-        TeamCheck = GetFlag("TeamCheck") or false,
-        WallCheck = GetFlag("WallCheck") or false,
-        FlyEnabled = GetFlag("FlyEnabled") or false,
-        FlySpeed = GetFlag("FlySpeed") or 50,
-        SpeedHackEnabled = GetFlag("SpeedHackEnabled") or false,
-        WalkSpeed = GetFlag("WalkSpeed") or 50,
-        JumpPowerEnabled = GetFlag("JumpPowerEnabled") or false,
-        JumpPowerValue = GetFlag("JumpPowerValue") or 100,
-        NoclipEnabled = GetFlag("NoclipEnabled") or false,
-        BHopEnabled = GetFlag("BHopEnabled") or false,
-        AntiAimEnabled = GetFlag("AntiAimEnabled") or false,
-        PitchMode = GetFlag("PitchMode") or "None",
-        YawMode = GetFlag("YawMode") or "None",
-        SpinSpeed = GetFlag("SpinSpeed") or 360,
-        ESPEnable = GetFlag("ESPEnable") or false,
-        SelfESP = GetFlag("SelfESP") or false,
-        SelfESPColor = GetFlag("SelfESPColor"),
-        HeadESP = GetFlag("HeadESP") or true,
-        HeadESPColor = GetFlag("HeadESPColor"),
-        HeadESPSize = GetFlag("HeadESPSize") or 25,
-        ESPDistance = GetFlag("ESPDistance") or 999999,
-        BoxESP = GetFlag("BoxESP") or true,
-        BoxColor = GetFlag("BoxColor"),
-        NameESP = GetFlag("NameESP") or true,
-        NameColor = GetFlag("NameColor"),
-        HealthBar = GetFlag("HealthBar") or true
+    Options: {
+        Text = string,
+        Default = boolean,
+        Tooltip = string,
     }
-end
+]]
+-- Groupbox:AddToggle
+-- Arguments: Index, Options
+LeftGroupBox:AddToggle('MyToggle', {
+    Text = 'This is a toggle',
+    Default = true,
+    Tooltip = 'This is a tooltip',
 
--- Funções auxiliares
-local function GetCharacter(p) return p.Character end
-local function GetHumanoid(p) local c = GetCharacter(p) return c and c:FindFirstChild("Humanoid") end
-local function IsAlive(p) local h = GetHumanoid(p) return h and h.Health > 0 end
-
-local function IsTeammate(p)
-    local cfg = GetConfig()
-    if not cfg.TeamCheck then return false end
-    return LocalPlayer.Team and p.Team == LocalPlayer.Team
-end
-
-local function GetPart(p, partName)
-    local c = GetCharacter(p)
-    if not c then return nil end
-    
-    local part = c:FindFirstChild(partName)
-    if part then return part end
-    
-    if partName == "Torso" then
-        part = c:FindFirstChild("UpperTorso")
-        if part then return part end
+    Callback = function(Value)
+        print('[cb] MyToggle changed to:', Value)
     end
-    
-    return c:FindFirstChild("HumanoidRootPart")
-end
+})
 
-local function GetTargetPart(t)
-    local cfg = GetConfig()
-    local part = GetPart(t, cfg.HitPart)
-    if not part then part = GetPart(t, "HumanoidRootPart") end
-    return part
-end
+-- Toggles is a table added to getgenv() by the library
+-- You index Toggles with the specified index, in this case 'MyToggle'
+Toggles.MyToggle:OnChanged(function()
+    print('MyToggle changed to:', Toggles.MyToggle.Value)
+end)
 
-local function WorldToScreen(pos)
-    local v, on = Camera:WorldToViewportPoint(pos)
-    return Vector2.new(v.X, v.Y), on
-end
+Toggles.MyToggle:SetValue(false)
 
-local function GetViewportCenter()
-    return Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-end
+--[[
+    Groupbox:AddButton
+    Arguments: Options
 
-local function GetAngleToTarget(t)
-    local p = GetTargetPart(t)
-    if not p then return math.huge end
-    local pos, on = WorldToScreen(p.Position)
-    if not on then return math.huge end
-    return (pos - GetViewportCenter()).Magnitude
-end
+    Options: {
+        Text = string,
+        Callback = function(),
+        DoubleClick = boolean,
+        Tooltip = string
+    }
+]]
+-- Groupbox:AddButton
+-- Arguments: Options table
+LeftGroupBox:AddButton({
+    Text = 'Button',
+    Callback = function()
+        print('You clicked a button!')
+    end,
+    DoubleClick = false,
+    Tooltip = 'this is a tooltip'
+})
 
--- Predição
-local function PredictPosition(t, pos)
-    local cfg = GetConfig()
-    if not cfg.PredictionEnabled then return pos end
-    
-    local root = GetPart(t, "HumanoidRootPart")
-    if not root or root.Velocity.Magnitude < 0.1 then return pos end
-    
-    local lr = GetPart(LocalPlayer, "HumanoidRootPart")
-    if not lr then return pos end
-    
-    local distance = (pos - lr.Position).Magnitude
-    local travelTime = distance / 3000
-    local strength = cfg.PredictStrength / 100
-    
-    travelTime = travelTime * strength
-    travelTime = math.min(travelTime, 0.3)
-    
-    return pos + (root.Velocity * travelTime)
-end
+LeftGroupBox:AddButton({
+    Text = 'Double Click Button',
+    Callback = function()
+        print('You double clicked!')
+    end,
+    DoubleClick = true,
+    Tooltip = 'Double click me!'
+})
 
--- Shake
-local function ApplyShake()
-    local cfg = GetConfig()
-    if cfg.ShakeValue <= 0 then return Vector2.zero end
-    return Vector2.new(
-        (math.random() - 0.5) * cfg.ShakeValue * 2,
-        (math.random() - 0.5) * cfg.ShakeValue * 2
-    )
-end
+--[[
+    Groupbox:AddLabel
+    Arguments: Text, DoesWrap
 
--- Smooth Aim
-local function SmoothAim(currentPos, targetPos)
-    local cfg = GetConfig()
-    local smooth = (cfg.SmoothnessX + cfg.SmoothnessY) / 2
-    local smoothFactor = 1 / (smooth * 2)
-    local delta = targetPos - currentPos
-    return currentPos + delta * math.min(smoothFactor, 0.3)
-end
+    Options: {
+        Text = string,
+        DoesWrap = boolean -- text wraps to next line
+    }
+]]
+-- Groupbox:AddLabel
+-- Arguments: Text, DoesWrap
+LeftGroupBox:AddLabel('This is a label')
+LeftGroupBox:AddLabel('This is a label\nwhich wraps its text!', true)
 
--- Mira automática
-local function AimAtTarget(t)
-    local p = GetTargetPart(t)
-    if not p then return end
-    
-    local pos = p.Position
-    if GetConfig().PredictionEnabled then
-        pos = PredictPosition(t, pos)
+--[[
+    Groupbox:AddDivider
+    Arguments: Options (optional)
+
+    Options: {
+        Text = string, -- Optional section title
+        Alignment = string, -- "Left", "Center", "Right"
+        Thickness = number -- Thickness in pixels
+    }
+]]
+-- Groupbox:AddDivider
+-- Arguments: Options (optional)
+LeftGroupBox:AddDivider()
+LeftGroupBox:AddDivider({
+    Text = "Section Title",
+    Alignment = "Center",
+    Thickness = 1
+})
+
+--[[
+    Groupbox:AddSlider
+    Arguments: Index, Options
+
+    Options: {
+        Text = string,
+        Default = number,
+        Min = number,
+        Max = number,
+        Rounding = number,
+        Suffix = string,
+        Compact = boolean, -- hides title label and shows value in slider bar
+        HideMax = boolean -- hides max value
+    }
+]]
+LeftGroupBox:AddSlider('MySlider', {
+    Text = 'This is my slider!',
+    Default = 0,
+    Min = 0,
+    Max = 5,
+    Rounding = 1,
+    Suffix = '',
+    Compact = false,
+
+    Callback = function(Value)
+        print('[cb] MySlider changed! New value:', Value)
     end
-    
-    local shake = ApplyShake()
-    pos = pos + Vector3.new(shake.X, shake.Y, 0)
-    
-    local currentCF = Camera.CFrame
-    local targetCF = CFrame.lookAt(currentCF.Position, pos)
-    local newCF = SmoothAim(currentCF, targetCF)
-    Camera.CFrame = newCF
-end
+})
 
--- Melhor alvo
-local function GetBestTarget()
-    local cfg = GetConfig()
-    local best = nil
-    local bestAngle = cfg.FOV
-    
-    for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and IsAlive(p) and not IsTeammate(p) then
-            local angle = GetAngleToTarget(p)
-            if angle < bestAngle then
-                bestAngle = angle
-                best = p
-            end
-        end
-    end
-    return best
-end
+-- Options is a table added to getgenv() by the library
+Options.MySlider:OnChanged(function()
+    print('MySlider was changed! New value:', Options.MySlider.Value)
+end)
 
--- Auto Shoot
-local function DoAutoShoot()
-    local cfg = GetConfig()
-    if not cfg.AutoShoot or not CurrentTarget then return end
-    
-    local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
-    if tool then
-        tool:Activate()
-    end
-end
+Options.MySlider:SetValue(3)
 
--- FOV Circle
-local function CreateFOVCircle()
-    if FOVCircle and FOVCircle.Parent then FOVCircle:Destroy() end
-    
-    local sg = Instance.new("ScreenGui")
-    sg.Name = "FOVCircleGUI"
-    sg.Parent = game:GetService("CoreGui")
-    sg.ResetOnSpawn = false
-    
-    FOVCircle = Instance.new("Frame")
-    FOVCircle.Name = "FOVCircle"
-    FOVCircle.BackgroundTransparency = 0.85
-    FOVCircle.BorderSizePixel = 2
-    FOVCircle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    FOVCircle.Parent = sg
-    
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(1, 0)
-    corner.Parent = FOVCircle
-end
+--[[
+    Groupbox:AddInput
+    Arguments: Index, Options
 
-local function UpdateFOVCircle()
-    if not FOVCircle then CreateFOVCircle() end
-    local cfg = GetConfig()
-    
-    if not cfg.ShowFOV or not cfg.AimbotEnabled then
-        FOVCircle.Visible = false
-        return
-    end
-    
-    FOVCircle.Visible = true
-    if cfg.FOVColor then
-        FOVCircle.BorderColor3 = cfg.FOVColor
-    end
-    
-    local fov = cfg.FOV
-    FOVCircle.Size = UDim2.new(0, fov * 2, 0, fov * 2)
-    FOVCircle.Position = UDim2.new(0.5, -fov, 0.5, -fov)
-end
+    Options: {
+        Text = string,
+        Default = string,
+        Placeholder = string,
+        Numeric = boolean, -- only allows numbers
+        Finished = boolean, -- calls callback only when enter is pressed
+        Tooltip = string,
+        Callback = function(Value)
+    }
+]]
+-- Groupbox:AddInput
+-- Arguments: Index, Options
+LeftGroupBox:AddInput('MyTextbox', {
+    Default = 'My textbox!',
+    Numeric = false,
+    Finished = false,
+    Text = 'This is a textbox',
+    Tooltip = 'This is a tooltip',
+    Placeholder = 'Placeholder text',
 
--- Head ESP
-local function UpdateHeadESP()
-    local cfg = GetConfig()
-    if not cfg.HeadESP then
-        for _, c in pairs(HeadESPCircles) do
-            pcall(function() c:Destroy() end)
-        end
-        HeadESPCircles = {}
-        return
+    Callback = function(Value)
+        print('[cb] Text updated. New text:', Value)
     end
-    
-    for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and IsAlive(p) then
-            local head = GetPart(p, "Head")
-            if head then
-                local pos, on = WorldToScreen(head.Position)
-                if on then
-                    local circle = HeadESPCircles[p]
-                    if not circle then
-                        local sg = Instance.new("ScreenGui")
-                        sg.Name = "HeadESP_" .. p.Name
-                        sg.Parent = game:GetService("CoreGui")
-                        sg.ResetOnSpawn = false
-                        
-                        circle = Instance.new("Frame")
-                        circle.Size = UDim2.new(0, cfg.HeadESPSize, 0, cfg.HeadESPSize)
-                        circle.BackgroundTransparency = 0.5
-                        circle.BorderSizePixel = 2
-                        circle.Parent = sg
-                        
-                        local corner = Instance.new("UICorner")
-                        corner.CornerRadius = UDim.new(1, 0)
-                        corner.Parent = circle
-                        
-                        HeadESPCircles[p] = circle
-                    end
-                    circle.Position = UDim2.new(0, pos.X - cfg.HeadESPSize/2, 0, pos.Y - cfg.HeadESPSize/2)
-                    if cfg.HeadESPColor then
-                        circle.BackgroundColor3 = cfg.HeadESPColor
-                    end
-                    circle.Size = UDim2.new(0, cfg.HeadESPSize, 0, cfg.HeadESPSize)
-                    circle.Visible = true
-                elseif HeadESPCircles[p] then
-                    HeadESPCircles[p].Visible = false
-                end
-            end
-        end
-    end
-end
+})
 
--- Speed e Jump
-local function ApplySpeedAndJump()
-    local cfg = GetConfig()
-    local char = LocalPlayer.Character
-    if not char then return end
-    local hum = char:FindFirstChild("Humanoid")
-    if hum then
-        hum.WalkSpeed = cfg.SpeedHackEnabled and cfg.WalkSpeed or 16
-        hum.JumpPower = cfg.JumpPowerEnabled and cfg.JumpPowerValue or 50
-    end
-end
+Options.MyTextbox:OnChanged(function()
+    print('Text updated. New text:', Options.MyTextbox.Value)
+end)
 
--- Noclip
-local function UpdateNoclip()
-    local cfg = GetConfig()
-    local char = LocalPlayer.Character
-    if not char then return end
-    
-    for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = not cfg.NoclipEnabled
-        end
-    end
-end
+--[[
+    Groupbox:AddDropdown
+    Arguments: Index, Options
 
--- Anti-Aim
-local function UpdateAntiAim()
-    local cfg = GetConfig()
-    if not cfg.AntiAimEnabled then return end
-    
-    local char = LocalPlayer.Character
-    if not char then return end
-    
-    local root = char:FindFirstChild("HumanoidRootPart")
-    if not root then return end
-    
-    local yaw = 0
-    if cfg.YawMode == "Backwards" then
-        yaw = 180
-    elseif cfg.YawMode == "Sideways" then
-        yaw = 90
-    elseif cfg.YawMode == "Spin Bot" then
-        SpinAngle = (SpinAngle + cfg.SpinSpeed / 60) % 360
-        yaw = SpinAngle
-    elseif cfg.YawMode == "Jitter" then
-        JitterTimer = JitterTimer + 0.1
-        yaw = math.sin(JitterTimer) * 90
-    end
-    
-    local pitch = 0
-    if cfg.PitchMode == "Up" then
-        pitch = -90
-    elseif cfg.PitchMode == "Down" then
-        pitch = 90
-    elseif cfg.PitchMode == "Jitter" then
-        JitterTimer = JitterTimer + 0.1
-        pitch = math.sin(JitterTimer) * 45
-    end
-    
-    root.CFrame = CFrame.new(root.Position) * CFrame.Angles(math.rad(pitch), math.rad(yaw), 0)
-end
+    Options: {
+        Text = string,
+        Values = table, -- Array of strings
+        Default = number or string, -- Index or Value
+        Multi = boolean, -- allows multiple selections
+        Tooltip = string,
+    }
+]]
+-- Groupbox:AddDropdown
+-- Arguments: Index, Options
+LeftGroupBox:AddDropdown('MyDropdown', {
+    Values = { 'This', 'is', 'a', 'dropdown' },
+    Default = 1,
+    Multi = false,
+    Text = 'A dropdown',
+    Tooltip = 'This is a tooltip',
 
--- Inicializar
-CreateFOVCircle()
+    Callback = function(Value)
+        print('[cb] Dropdown changed. New value:', Value)
+    end
+})
 
--- Loop principal
-RunService.RenderStepped:Connect(function()
-    UpdateFOVCircle()
-    ApplySpeedAndJump()
-    UpdateNoclip()
-    UpdateHeadESP()
-    UpdateAntiAim()
-    
-    local cfg = GetConfig()
-    
-    if cfg.AimbotEnabled then
-        local best = GetBestTarget()
-        
-        if cfg.StickyAim and CurrentTarget and IsAlive(CurrentTarget) then
-            if GetAngleToTarget(CurrentTarget) <= cfg.FOV then
-                best = CurrentTarget
-            end
-        end
-        
-        CurrentTarget = best
-        
-        if CurrentTarget then
-            local angle = GetAngleToTarget(CurrentTarget)
-            if angle <= cfg.FOV then
-                AimAtTarget(CurrentTarget)
-                DoAutoShoot()
-            end
-        end
+Options.MyDropdown:OnChanged(function()
+    print('Dropdown got changed. New value:', Options.MyDropdown.Value)
+end)
+
+Options.MyDropdown:SetValue('This')
+
+-- Multi dropdowns
+LeftGroupBox:AddDropdown('MyMultiDropdown', {
+    Values = { 'This', 'is', 'a', 'dropdown' },
+    Default = 1,
+    Multi = true,
+    Text = 'A multi dropdown',
+    Tooltip = 'this is a tooltip',
+
+    Callback = function(Value)
+        print('[cb] Multi dropdown changed:', Value)
+    end
+})
+
+Options.MyMultiDropdown:OnChanged(function()
+    print('Multi dropdown changed:')
+    for key, value in next, Options.MyMultiDropdown.Value do
+        print(key, value)
     end
 end)
 
-Library:Notification("Slip.wtf", "Loaded! All pages working", 5)
+--[[
+    Label:AddColorPicker
+    Arguments: Index, Options
+
+    Options: {
+        Title = string,             -- Picker window title
+        Transparency = number,      -- 0-1, enables transparency slider with this default value
+    }
+]]
+-- Label:AddColorPicker
+-- Arguments: Index, Options
+LeftGroupBox:AddLabel('ColorPicker'):AddColorPicker('ColorPicker', {
+    Default = Color3.fromRGB(0, 255, 0),
+    Title = 'Some color',
+    Transparency = 0.5,
+
+    Callback = function(Value)
+        print('[cb] Color changed!', Value)
+    end
+})
+
+Options.ColorPicker:OnChanged(function()
+    print('Color changed!', Options.ColorPicker.Value)
+    print('Transparency changed!', Options.ColorPicker.Transparency)
+end)
+
+Options.ColorPicker:SetValueRGB(Color3.fromRGB(0, 255, 0))
+
+--[[
+    Groupbox:AddKeybind
+    Arguments: Index, Options
+
+    Options: {
+        Title = string,
+        Default = Enum.KeyCode or string,
+        Mode = string, -- "Always", "Toggle", "Hold"
+    }
+]]
+
+LeftGroupBox:AddKeybind('KeyBind', {
+    Default = 'MB2',
+    Mode = 'Toggle',
+    Title = 'Keybind Label',
+
+    Callback = function(Value)
+        print('[cb] Keybind activated!', Value)
+    end,
+
+    ChangedCallback = function(New)
+        print('[cb] Keybind changed to:', New)
+    end
+})
+
+Options.KeyBind:OnChanged(function()
+    print('Keybind changed!', Options.KeyBind.Value)
+end)
+
+-- Check if keybind is being held (for 'Hold' mode)
+-- local isHeld = Options.KeyBind:GetState()
+
+-- Toggle with ColorPicker and Keybind
+LeftGroupBox:AddToggle('FeatureToggle', {
+    Text = 'Toggle kc',
+    Default = false
+}):AddColorPicker('FeatureColor', {
+    Default = Color3.fromRGB(255, 0, 0),
+    Transparency = 0.5,
+    Title = 'Feature color',
+}):AddKeybind('FeatureKey', {
+    Default = 'E',
+    Mode = 'Toggle',
+    Title = 'Feature keybind'
+})
+
+-- Tabbox (MultiGroupbox)
+local TabBox = Tabs.Main:AddMultiGroupbox('Mid')
+local Tab1 = TabBox:AddGroupBox('Tab 1')
+Tab1:AddToggle('Tab1Toggle', { Text = 'Tab1 Toggle' })
+local Tab2 = TabBox:AddGroupBox('Tab 2')
+Tab2:AddToggle('Tab2Toggle', { Text = 'Tab2 Toggle' })
+
+-- Dependency box
+local RightGroupbox = Tabs.Main:AddRightGroupbox('Groupbox 3')
+RightGroupbox:AddToggle('Togglesubsop', { Text = 'Show sub-options' })
+
+local Depbox = RightGroupbox:AddDependencyBox()
+Depbox:AddToggle('DepboxToggle', { Text = 'Sub toggle' })
+Depbox:AddSlider('DepboxSlider', { Text = 'Slider', Default = 50, Min = 0, Max = 100, Rounding = 0 })
+Depbox:AddDropdown('DepboxDropdown', { Text = 'Dropdown', Default = 1, Values = {'a', 'b', 'c'} })
+
+Depbox:SetupDependencies({
+    { Toggles.Togglesubsop, true }
+})
+
+-- Player List
+-- Access player priority/ignore lists via Settings.PlayersList
+local function isPlayerPrioritized(player)
+    return Settings.PlayersList.Prioritize[player.UserId] == true
+end
+
+local function isPlayerIgnored(player)
+    return Settings.PlayersList.Ignore[player.UserId] == true
+end
+
+-- Notifications
+Settings:Notify('StellarHub Example Loaded!', 5)
+
+
+-- Theme Colors Access
+-- You can access the current theme colors using Settings.ThemeColors:
+-- Settings.ThemeColors.Background
+-- Settings.ThemeColors.Border
+-- Settings.ThemeColors.Text
+-- Settings.ThemeColors.Header
+-- Settings.ThemeColors.Button
+
+-- Unload callback
+Settings:OnUnload(function()
+    print('Script unloaded!')
+end)
