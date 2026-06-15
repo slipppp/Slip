@@ -1,16 +1,8 @@
--- StellarHub UI Documentation
--- the example is based on linorialib
--- So if something is missing here, look at the linorialib example. Normally it will work too,
--- because almost everything is based on linorialib, so big credit to violin-suzutsuki.
--- it won't be open source because there are some config obfuscation option in the menu, so if it's open source,
--- there's no point in including them, i'll maybe try to find a solution later for open source
--- If you have any changes to make / bugs / add, please come to discord : /kqKdsN9hDP
-
 local StellarHubMenu = loadstring(game:HttpGet("https://raw.githubusercontent.com/ImNotFatBitch/uimenu/main/StellarhubMenu"))()
 local Settings = loadstring(game:HttpGet("https://raw.githubusercontent.com/ImNotFatBitch/uimenu/main/StellarhubSettings"))()
 
 local Window = StellarHubMenu:Create({
-    Title = 'TestTitle',                    -- Window title
+    Title = 'Slip.wtf',                    -- Window title
     Size = UDim2.new(0, 400, 0, 250),       -- Window size (default: 700x550) (Not recommended, may break things)
     Position = UDim2.new(0.5, 0, 0.5, 0),   -- Window position (default: center)
     ShowOnCreate = true,                    -- Show menu immediately (default: true)
@@ -19,11 +11,11 @@ local Window = StellarHubMenu:Create({
     UnloadTotal = true,                     -- disable ALL toggle etc before unload (default: true)
  
     -- PlayerList options
-    PlayerListEnabled = true,               -- hides PlayerList toggle and set it on false
+    PlayerListEnabled = false,               -- hides PlayerList toggle and set it on false
  
     -- Watermark options
     WatermarkEnabled = true,                -- hides entire Watermark section and disables watermark
-    WatermarkText = 'MyScript',             -- Custom watermark Title
+    WatermarkText = 'Slip.wtf',             -- Custom watermark Title
     CanChangeTitleWatermark = false,        -- hides textbox, players can't change title
     ObfuscateConfig = false,                -- obfuscate the config file
     MobileLogo = 'rbxassetid://14768967526',-- Mobile Logo Button
