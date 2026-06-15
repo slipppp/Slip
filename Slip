@@ -9,15 +9,30 @@ local Window = Library:Window({
 local Watermark = Library:Watermark("Slip.wtf | v1.0")
 local KeybindList = Library:KeybindList()
 
--- ============================================
--- MAIN PAGE
--- ============================================
+-- CRIAR PÁGINAS (TODAS AS ABAS)
 local MainPage = Window:Page({
     Name = "Main",
     Columns = 4
 })
 
--- COLUNA 1: AIMBOT
+local MovementPage = Window:Page({
+    Name = "Movement",
+    Columns = 2
+})
+
+local VisualsPage = Window:Page({
+    Name = "Visuals",
+    Columns = 2
+})
+
+local PlayersPage = Window:Page({
+    Name = "Players",
+    Columns = 1
+})
+
+-- ============================================
+-- MAIN PAGE - AIMBOT
+-- ============================================
 local AimbotSection = MainPage:Section({
     Name = "Aimbot",
     Side = 1
@@ -26,30 +41,21 @@ local AimbotSection = MainPage:Section({
 AimbotSection:Toggle({
     Name = "Aimbot (Auto-Lock)",
     Flag = "AimbotEnabled",
-    Default = false,
-    Callback = function(Value)
-        print("Aimbot Enabled:", Value)
-    end
+    Default = false
 })
 
 AimbotSection:Dropdown({
     Name = "Hit Part",
     Flag = "HitPart",
-    Items = {"Head", "Torso", "HumanoidRootPart", "Left Arm", "Right Arm", "Left Leg", "Right Leg"},
-    Default = "Head",
-    Callback = function(Value)
-        print("Hit Part:", Value)
-    end
+    Items = {"Head", "Torso", "HumanoidRootPart", "Left Arm", "Right Arm"},
+    Default = "Head"
 })
 
 AimbotSection:Dropdown({
     Name = "Air Part",
     Flag = "AirPart",
-    Items = {"Head", "Torso", "HumanoidRootPart", "Left Arm", "Right Arm", "Left Leg", "Right Leg", "None"},
-    Default = "Head",
-    Callback = function(Value)
-        print("Air Part:", Value)
-    end
+    Items = {"Head", "Torso", "HumanoidRootPart", "None"},
+    Default = "Head"
 })
 
 AimbotSection:Slider({
@@ -59,29 +65,20 @@ AimbotSection:Slider({
     Max = 360,
     Default = 120,
     Decimals = 1,
-    Suffix = "°",
-    Callback = function(Value)
-        print("FOV:", Value)
-    end
+    Suffix = "°"
 })
 
 AimbotSection:Toggle({
     Name = "Show FOV",
     Flag = "ShowFOV",
-    Default = true,
-    Callback = function(Value)
-        print("Show FOV:", Value)
-    end
+    Default = true
 })
 
 AimbotSection:Colorpicker({
     Name = "FOV Color",
     Flag = "FOVColor",
     Default = Color3.fromRGB(255, 0, 0),
-    Alpha = 0.5,
-    Callback = function(Color, Alpha)
-        print("FOV Color updated")
-    end
+    Alpha = 0.5
 })
 
 AimbotSection:Slider({
@@ -91,10 +88,7 @@ AimbotSection:Slider({
     Max = 50,
     Default = 5,
     Decimals = 1,
-    Suffix = "°",
-    Callback = function(Value)
-        print("Deadzone:", Value)
-    end
+    Suffix = "°"
 })
 
 AimbotSection:Slider({
@@ -103,14 +97,10 @@ AimbotSection:Slider({
     Min = 0,
     Max = 10,
     Default = 0,
-    Decimals = 2,
-    Suffix = "",
-    Callback = function(Value)
-        print("Shake:", Value)
-    end
+    Decimals = 2
 })
 
--- COLUNA 2: SMOOTHNESS
+-- SMOOTHNESS
 local SmoothnessSection = MainPage:Section({
     Name = "Smoothness",
     Side = 2
@@ -122,11 +112,7 @@ SmoothnessSection:Slider({
     Min = 1,
     Max = 30,
     Default = 8,
-    Decimals = 1,
-    Suffix = "",
-    Callback = function(Value)
-        print("Smoothness X:", Value)
-    end
+    Decimals = 1
 })
 
 SmoothnessSection:Slider({
@@ -135,14 +121,10 @@ SmoothnessSection:Slider({
     Min = 1,
     Max = 30,
     Default = 8,
-    Decimals = 1,
-    Suffix = "",
-    Callback = function(Value)
-        print("Smoothness Y:", Value)
-    end
+    Decimals = 1
 })
 
--- COLUNA 3: PREDICTION
+-- PREDICTION
 local PredictionSection = MainPage:Section({
     Name = "Prediction",
     Side = 3
@@ -151,20 +133,14 @@ local PredictionSection = MainPage:Section({
 PredictionSection:Toggle({
     Name = "Prediction",
     Flag = "PredictionEnabled",
-    Default = true,
-    Callback = function(Value)
-        print("Prediction:", Value)
-    end
+    Default = true
 })
 
 PredictionSection:Dropdown({
     Name = "Predict Method",
     Flag = "PredictMethod",
     Items = {"Linear", "Velocity", "Distance", "Smart"},
-    Default = "Smart",
-    Callback = function(Value)
-        print("Method:", Value)
-    end
+    Default = "Smart"
 })
 
 PredictionSection:Slider({
@@ -174,13 +150,10 @@ PredictionSection:Slider({
     Max = 100,
     Default = 65,
     Decimals = 0,
-    Suffix = "%",
-    Callback = function(Value)
-        print("Strength:", Value)
-    end
+    Suffix = "%"
 })
 
--- COLUNA 4: SETTINGS
+-- SETTINGS
 local SettingsSection = MainPage:Section({
     Name = "Settings",
     Side = 4
@@ -189,57 +162,30 @@ local SettingsSection = MainPage:Section({
 SettingsSection:Toggle({
     Name = "Auto Shoot",
     Flag = "AutoShoot",
-    Default = false,
-    Callback = function(Value)
-        print("Auto Shoot:", Value)
-    end
+    Default = false
 })
 
 SettingsSection:Toggle({
     Name = "Sticky Aim",
     Flag = "StickyAim",
-    Default = true,
-    Callback = function(Value)
-        print("Sticky Aim:", Value)
-    end
+    Default = true
 })
 
 SettingsSection:Toggle({
     Name = "Team Check",
     Flag = "TeamCheck",
-    Default = false,
-    Callback = function(Value)
-        print("Team Check:", Value)
-    end
+    Default = false
 })
 
 SettingsSection:Toggle({
     Name = "Wall Check",
     Flag = "WallCheck",
-    Default = false,
-    Callback = function(Value)
-        print("Wall Check:", Value)
-    end
-})
-
-SettingsSection:Toggle({
-    Name = "Visible Check",
-    Flag = "VisibleCheck",
-    Default = true,
-    Callback = function(Value)
-        print("Visible Check:", Value)
-    end
+    Default = false
 })
 
 -- ============================================
 -- MOVEMENT PAGE
 -- ============================================
-local MovementPage = Window:Page({
-    Name = "Movement",
-    Columns = 2
-})
-
--- COLUNA 1: MOVEMENT HACKS
 local MoveSection = MovementPage:Section({
     Name = "Movement Hacks",
     Side = 1
@@ -248,10 +194,7 @@ local MoveSection = MovementPage:Section({
 MoveSection:Toggle({
     Name = "Fly",
     Flag = "FlyEnabled",
-    Default = false,
-    Callback = function(Value)
-        print("Fly:", Value)
-    end
+    Default = false
 })
 
 MoveSection:Slider({
@@ -260,20 +203,13 @@ MoveSection:Slider({
     Min = 10,
     Max = 200,
     Default = 50,
-    Decimals = 0,
-    Suffix = "",
-    Callback = function(Value)
-        print("Fly Speed:", Value)
-    end
+    Decimals = 0
 })
 
 MoveSection:Toggle({
     Name = "Speed Hack",
     Flag = "SpeedHackEnabled",
-    Default = false,
-    Callback = function(Value)
-        print("Speed Hack:", Value)
-    end
+    Default = false
 })
 
 MoveSection:Slider({
@@ -282,20 +218,13 @@ MoveSection:Slider({
     Min = 16,
     Max = 350,
     Default = 50,
-    Decimals = 0,
-    Suffix = "",
-    Callback = function(Value)
-        print("Walk Speed:", Value)
-    end
+    Decimals = 0
 })
 
 MoveSection:Toggle({
     Name = "Jump Power",
     Flag = "JumpPowerEnabled",
-    Default = false,
-    Callback = function(Value)
-        print("Jump Power:", Value)
-    end
+    Default = false
 })
 
 MoveSection:Slider({
@@ -304,32 +233,22 @@ MoveSection:Slider({
     Min = 50,
     Max = 500,
     Default = 100,
-    Decimals = 0,
-    Suffix = "",
-    Callback = function(Value)
-        print("Jump Value:", Value)
-    end
+    Decimals = 0
 })
 
 MoveSection:Toggle({
     Name = "Noclip",
     Flag = "NoclipEnabled",
-    Default = false,
-    Callback = function(Value)
-        print("Noclip:", Value)
-    end
+    Default = false
 })
 
 MoveSection:Toggle({
     Name = "BHop",
     Flag = "BHopEnabled",
-    Default = false,
-    Callback = function(Value)
-        print("BHop:", Value)
-    end
+    Default = false
 })
 
--- COLUNA 2: ANTI-AIM
+-- ANTI-AIM
 local AntiAimSection = MovementPage:Section({
     Name = "Anti-Aim",
     Side = 2
@@ -338,30 +257,21 @@ local AntiAimSection = MovementPage:Section({
 AntiAimSection:Toggle({
     Name = "Anti-Aim",
     Flag = "AntiAimEnabled",
-    Default = false,
-    Callback = function(Value)
-        print("Anti-Aim:", Value)
-    end
+    Default = false
 })
 
 AntiAimSection:Dropdown({
     Name = "Pitch Mode",
     Flag = "PitchMode",
     Items = {"Up", "Down", "Jitter", "None"},
-    Default = "None",
-    Callback = function(Value)
-        print("Pitch:", Value)
-    end
+    Default = "None"
 })
 
 AntiAimSection:Dropdown({
     Name = "Yaw Mode",
     Flag = "YawMode",
     Items = {"Backwards", "Sideways", "Spin Bot", "Jitter", "None"},
-    Default = "None",
-    Callback = function(Value)
-        print("Yaw:", Value)
-    end
+    Default = "None"
 })
 
 AntiAimSection:Slider({
@@ -371,21 +281,12 @@ AntiAimSection:Slider({
     Max = 3600,
     Default = 360,
     Decimals = 0,
-    Suffix = "°/s",
-    Callback = function(Value)
-        print("Spin Speed:", Value)
-    end
+    Suffix = "°/s"
 })
 
 -- ============================================
 -- VISUALS PAGE
 -- ============================================
-local VisualsPage = Window:Page({
-    Name = "Visuals",
-    Columns = 2
-})
-
--- COLUNA 1: ESP CONFIG
 local ESPConfigSection = VisualsPage:Section({
     Name = "ESP",
     Side = 1
@@ -394,48 +295,33 @@ local ESPConfigSection = VisualsPage:Section({
 ESPConfigSection:Toggle({
     Name = "ESP Enable",
     Flag = "ESPEnable",
-    Default = false,
-    Callback = function(Value)
-        print("ESP:", Value)
-    end
+    Default = false
 })
 
 ESPConfigSection:Toggle({
     Name = "Self ESP",
     Flag = "SelfESP",
-    Default = false,
-    Callback = function(Value)
-        print("Self ESP:", Value)
-    end
+    Default = false
 })
 
 ESPConfigSection:Colorpicker({
     Name = "Self ESP Color",
     Flag = "SelfESPColor",
     Default = Color3.fromRGB(0, 255, 0),
-    Alpha = 1,
-    Callback = function(Color, Alpha)
-        print("Self ESP Color updated")
-    end
+    Alpha = 1
 })
 
 ESPConfigSection:Toggle({
     Name = "Head ESP",
     Flag = "HeadESP",
-    Default = true,
-    Callback = function(Value)
-        print("Head ESP:", Value)
-    end
+    Default = true
 })
 
 ESPConfigSection:Colorpicker({
     Name = "Head ESP Color",
     Flag = "HeadESPColor",
     Default = Color3.fromRGB(255, 0, 0),
-    Alpha = 1,
-    Callback = function(Color, Alpha)
-        print("Head Color updated")
-    end
+    Alpha = 1
 })
 
 ESPConfigSection:Slider({
@@ -445,10 +331,7 @@ ESPConfigSection:Slider({
     Max = 60,
     Default = 25,
     Decimals = 0,
-    Suffix = "px",
-    Callback = function(Value)
-        print("Head Size:", Value)
-    end
+    Suffix = "px"
 })
 
 ESPConfigSection:Slider({
@@ -458,13 +341,10 @@ ESPConfigSection:Slider({
     Max = 999999,
     Default = 999999,
     Decimals = 0,
-    Suffix = " studs",
-    Callback = function(Value)
-        print("ESP Distance:", Value)
-    end
+    Suffix = " studs"
 })
 
--- COLUNA 2: ESP CORES & OPÇÕES
+-- ESP COLORS
 local ESPColorsSection = VisualsPage:Section({
     Name = "ESP Colors",
     Side = 2
@@ -473,90 +353,41 @@ local ESPColorsSection = VisualsPage:Section({
 ESPColorsSection:Toggle({
     Name = "Box ESP",
     Flag = "BoxESP",
-    Default = true,
-    Callback = function(Value)
-        print("Box ESP:", Value)
-    end
+    Default = true
 })
 
 ESPColorsSection:Colorpicker({
     Name = "Box Color",
     Flag = "BoxColor",
     Default = Color3.fromRGB(255, 0, 0),
-    Alpha = 1,
-    Callback = function(Color, Alpha)
-        print("Box Color updated")
-    end
+    Alpha = 1
 })
 
 ESPColorsSection:Toggle({
     Name = "Name ESP",
     Flag = "NameESP",
-    Default = true,
-    Callback = function(Value)
-        print("Name ESP:", Value)
-    end
+    Default = true
 })
 
 ESPColorsSection:Colorpicker({
     Name = "Name Color",
     Flag = "NameColor",
     Default = Color3.fromRGB(255, 255, 255),
-    Alpha = 1,
-    Callback = function(Color, Alpha)
-        print("Name Color updated")
-    end
-})
-
-ESPColorsSection:Toggle({
-    Name = "Tracer ESP",
-    Flag = "TracerESP",
-    Default = false,
-    Callback = function(Value)
-        print("Tracer:", Value)
-    end
-})
-
-ESPColorsSection:Colorpicker({
-    Name = "Tracer Color",
-    Flag = "TracerColor",
-    Default = Color3.fromRGB(255, 255, 255),
-    Alpha = 1,
-    Callback = function(Color, Alpha)
-        print("Tracer Color updated")
-    end
+    Alpha = 1
 })
 
 ESPColorsSection:Toggle({
     Name = "Health Bar",
     Flag = "HealthBar",
-    Default = true,
-    Callback = function(Value)
-        print("Health Bar:", Value)
-    end
+    Default = true
 })
 
 -- ============================================
 -- PLAYERS PAGE
 -- ============================================
-local PlayersPage = Window:Page({
-    Name = "Players",
-    Columns = 1
-})
-
 local PlayerControlSection = PlayersPage:Section({
     Name = "Player Control",
     Side = 1
-})
-
-PlayerControlSection:Dropdown({
-    Name = "Select Player",
-    Flag = "SelectedPlayer",
-    Items = {"None"},
-    Default = "None",
-    Callback = function(Value)
-        print("Selected:", Value)
-    end
 })
 
 PlayerControlSection:Button({
@@ -568,46 +399,32 @@ PlayerControlSection:Button({
                 table.insert(players, v.Name)
             end
         end
-        Library:Notification("Players", "List refreshed - " .. (#players-1) .. " players", 2)
+        Library:Notification("Players", "List refreshed", 2)
     end
 })
 
 PlayerControlSection:Button({
     Name = "Teleport to Player",
     Callback = function()
-        local flags = Library.Flags
-        local target = game.Players:FindFirstChild(flags.SelectedPlayer)
-        local localChar = game.Players.LocalPlayer.Character
-        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and localChar and localChar:FindFirstChild("HumanoidRootPart") then
-            localChar.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame + Vector3.new(0, 3, 0)
-            Library:Notification("Teleported", "to " .. target.Name, 2)
-        else
-            Library:Notification("Error", "Player not found", 2)
-        end
+        Library:Notification("Teleport", "Select a player first", 2)
     end
 })
 
 PlayerControlSection:Button({
     Name = "Bring Player",
     Callback = function()
-        local flags = Library.Flags
-        local target = game.Players:FindFirstChild(flags.SelectedPlayer)
-        local localChar = game.Players.LocalPlayer.Character
-        if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") and localChar and localChar:FindFirstChild("HumanoidRootPart") then
-            local pos = localChar.HumanoidRootPart.Position + localChar.HumanoidRootPart.CFrame.LookVector * 5
-            target.Character.HumanoidRootPart.CFrame = CFrame.new(pos)
-            Library:Notification("Brought", target.Name, 2)
-        else
-            Library:Notification("Error", "Player not found", 2)
-        end
+        Library:Notification("Bring", "Select a player first", 2)
     end
 })
 
+-- ============================================
+-- SALVAR CONFIGURAÇÕES
+-- ============================================
 Library:CreateSettingsPage(Window, Watermark, KeybindList)
 Library:CheckForAutoLoad()
 
 -- ============================================
--- IMPLEMENTAÇÃO COMPLETA DO AIMBOT AUTO-LOCK
+-- IMPLEMENTAÇÃO DO AIMBOT AUTO-LOCK
 -- ============================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -623,55 +440,62 @@ local FlyBodyGyro = nil
 local FlyBodyVelocity = nil
 local SpinAngle = 0
 local JitterTimer = 0
+local HeadESPCircles = {}
 
--- Config dinâmica
+-- Pegar configuração atual
+local function GetFlag(flagName)
+    local success, result = pcall(function()
+        return Library.Flags[flagName]
+    end)
+    if success then
+        return result
+    end
+    return nil
+end
+
 local function GetConfig()
-    local f = Library.Flags
     return {
-        AimbotEnabled = f.AimbotEnabled or false,
-        HitPart = f.HitPart or "Head",
-        AirPart = f.AirPart or "Head",
-        FOV = f.FOV or 120,
-        ShowFOV = f.ShowFOV or true,
-        FOVColor = f.FOVColor,
-        Deadzone = f.Deadzone or 5,
-        ShakeValue = f.ShakeValue or 0,
-        SmoothnessX = f.SmoothnessX or 8,
-        SmoothnessY = f.SmoothnessY or 8,
-        PredictionEnabled = f.PredictionEnabled or true,
-        PredictMethod = f.PredictMethod or "Smart",
-        PredictStrength = f.PredictStrength or 65,
-        AutoShoot = f.AutoShoot or false,
-        StickyAim = f.StickyAim or true,
-        TeamCheck = f.TeamCheck or false,
-        WallCheck = f.WallCheck or false,
-        VisibleCheck = f.VisibleCheck or true,
-        FlyEnabled = f.FlyEnabled or false,
-        FlySpeed = f.FlySpeed or 50,
-        SpeedHackEnabled = f.SpeedHackEnabled or false,
-        WalkSpeed = f.WalkSpeed or 50,
-        JumpPowerEnabled = f.JumpPowerEnabled or false,
-        JumpPowerValue = f.JumpPowerValue or 100,
-        NoclipEnabled = f.NoclipEnabled or false,
-        BHopEnabled = f.BHopEnabled or false,
-        AntiAimEnabled = f.AntiAimEnabled or false,
-        PitchMode = f.PitchMode or "None",
-        YawMode = f.YawMode or "None",
-        SpinSpeed = f.SpinSpeed or 360,
-        ESPEnable = f.ESPEnable or false,
-        SelfESP = f.SelfESP or false,
-        SelfESPColor = f.SelfESPColor,
-        HeadESP = f.HeadESP or true,
-        HeadESPColor = f.HeadESPColor,
-        HeadESPSize = f.HeadESPSize or 25,
-        ESPDistance = f.ESPDistance or 999999,
-        BoxESP = f.BoxESP or true,
-        BoxColor = f.BoxColor,
-        NameESP = f.NameESP or true,
-        NameColor = f.NameColor,
-        TracerESP = f.TracerESP or false,
-        TracerColor = f.TracerColor,
-        HealthBar = f.HealthBar or true
+        AimbotEnabled = GetFlag("AimbotEnabled") or false,
+        HitPart = GetFlag("HitPart") or "Head",
+        AirPart = GetFlag("AirPart") or "Head",
+        FOV = GetFlag("FOV") or 120,
+        ShowFOV = GetFlag("ShowFOV") or true,
+        FOVColor = GetFlag("FOVColor"),
+        Deadzone = GetFlag("Deadzone") or 5,
+        ShakeValue = GetFlag("ShakeValue") or 0,
+        SmoothnessX = GetFlag("SmoothnessX") or 8,
+        SmoothnessY = GetFlag("SmoothnessY") or 8,
+        PredictionEnabled = GetFlag("PredictionEnabled") or true,
+        PredictMethod = GetFlag("PredictMethod") or "Smart",
+        PredictStrength = GetFlag("PredictStrength") or 65,
+        AutoShoot = GetFlag("AutoShoot") or false,
+        StickyAim = GetFlag("StickyAim") or true,
+        TeamCheck = GetFlag("TeamCheck") or false,
+        WallCheck = GetFlag("WallCheck") or false,
+        FlyEnabled = GetFlag("FlyEnabled") or false,
+        FlySpeed = GetFlag("FlySpeed") or 50,
+        SpeedHackEnabled = GetFlag("SpeedHackEnabled") or false,
+        WalkSpeed = GetFlag("WalkSpeed") or 50,
+        JumpPowerEnabled = GetFlag("JumpPowerEnabled") or false,
+        JumpPowerValue = GetFlag("JumpPowerValue") or 100,
+        NoclipEnabled = GetFlag("NoclipEnabled") or false,
+        BHopEnabled = GetFlag("BHopEnabled") or false,
+        AntiAimEnabled = GetFlag("AntiAimEnabled") or false,
+        PitchMode = GetFlag("PitchMode") or "None",
+        YawMode = GetFlag("YawMode") or "None",
+        SpinSpeed = GetFlag("SpinSpeed") or 360,
+        ESPEnable = GetFlag("ESPEnable") or false,
+        SelfESP = GetFlag("SelfESP") or false,
+        SelfESPColor = GetFlag("SelfESPColor"),
+        HeadESP = GetFlag("HeadESP") or true,
+        HeadESPColor = GetFlag("HeadESPColor"),
+        HeadESPSize = GetFlag("HeadESPSize") or 25,
+        ESPDistance = GetFlag("ESPDistance") or 999999,
+        BoxESP = GetFlag("BoxESP") or true,
+        BoxColor = GetFlag("BoxColor"),
+        NameESP = GetFlag("NameESP") or true,
+        NameColor = GetFlag("NameColor"),
+        HealthBar = GetFlag("HealthBar") or true
     }
 end
 
@@ -686,51 +510,26 @@ local function IsTeammate(p)
     return LocalPlayer.Team and p.Team == LocalPlayer.Team
 end
 
-local function IsVisible(part)
-    local cfg = GetConfig()
-    if not cfg.VisibleCheck then return true end
-    local origin = Camera.CFrame.Position
-    local ray = Ray.new(origin, (part.Position - origin).Unit * (part.Position - origin).Magnitude)
-    local hit, pos = workspace:FindPartOnRay(ray, LocalPlayer.Character)
-    return hit == part or hit == nil
-end
-
-local function IsJumping(p)
-    local h = GetHumanoid(p)
-    if not h then return false end
-    local s = h:GetState()
-    return s == Enum.HumanoidStateType.Jumping or s == Enum.HumanoidStateType.Freefall
-end
-
 local function GetPart(p, partName)
     local c = GetCharacter(p)
     if not c then return nil end
     
-    local mapping = {
-        Head = {"Head"},
-        Torso = {"Torso", "UpperTorso"},
-        HumanoidRootPart = {"HumanoidRootPart"},
-        ["Left Arm"] = {"Left Arm", "LeftHand"},
-        ["Right Arm"] = {"Right Arm", "RightHand"},
-        ["Left Leg"] = {"Left Leg", "LeftFoot"},
-        ["Right Leg"] = {"Right Leg", "RightFoot"}
-    }
+    local part = c:FindFirstChild(partName)
+    if part then return part end
     
-    local names = mapping[partName] or {partName}
-    for _, name in ipairs(names) do
-        local part = c:FindFirstChild(name)
+    if partName == "Torso" then
+        part = c:FindFirstChild("UpperTorso")
         if part then return part end
     end
-    return nil
+    
+    return c:FindFirstChild("HumanoidRootPart")
 end
 
 local function GetTargetPart(t)
     local cfg = GetConfig()
-    local name = cfg.HitPart
-    if IsJumping(t) and cfg.AirPart ~= "None" then
-        name = cfg.AirPart
-    end
-    return GetPart(t, name) or GetPart(t, "HumanoidRootPart") or GetPart(t, "Torso") or GetPart(t, "UpperTorso")
+    local part = GetPart(t, cfg.HitPart)
+    if not part then part = GetPart(t, "HumanoidRootPart") end
+    return part
 end
 
 local function WorldToScreen(pos)
@@ -747,8 +546,7 @@ local function GetAngleToTarget(t)
     if not p then return math.huge end
     local pos, on = WorldToScreen(p.Position)
     if not on then return math.huge end
-    local center = GetViewportCenter()
-    return (pos - center).Magnitude
+    return (pos - GetViewportCenter()).Magnitude
 end
 
 -- Predição
@@ -756,25 +554,15 @@ local function PredictPosition(t, pos)
     local cfg = GetConfig()
     if not cfg.PredictionEnabled then return pos end
     
-    local root = GetPart(t, "HumanoidRootPart") or GetPart(t, "Torso") or GetPart(t, "UpperTorso")
+    local root = GetPart(t, "HumanoidRootPart")
     if not root or root.Velocity.Magnitude < 0.1 then return pos end
     
-    local lr = GetPart(LocalPlayer, "HumanoidRootPart") or GetPart(LocalPlayer, "Torso") or GetPart(LocalPlayer, "UpperTorso")
+    local lr = GetPart(LocalPlayer, "HumanoidRootPart")
     if not lr then return pos end
     
     local distance = (pos - lr.Position).Magnitude
-    local bulletSpeed = 3000
-    local travelTime = distance / bulletSpeed
+    local travelTime = distance / 3000
     local strength = cfg.PredictStrength / 100
-    
-    if cfg.PredictMethod == "Velocity" then
-        travelTime = travelTime * (root.Velocity.Magnitude / 50)
-    elseif cfg.PredictMethod == "Distance" then
-        travelTime = travelTime * (distance / 100)
-    elseif cfg.PredictMethod == "Smart" then
-        local speedFactor = math.clamp(root.Velocity.Magnitude / 100, 0.5, 2)
-        travelTime = travelTime * speedFactor
-    end
     
     travelTime = travelTime * strength
     travelTime = math.min(travelTime, 0.3)
@@ -795,14 +583,13 @@ end
 -- Smooth Aim
 local function SmoothAim(currentPos, targetPos)
     local cfg = GetConfig()
-    local smoothX = cfg.SmoothnessX
-    local smoothY = cfg.SmoothnessY
-    local smoothFactor = 1 / ((smoothX + smoothY) / 2)
+    local smooth = (cfg.SmoothnessX + cfg.SmoothnessY) / 2
+    local smoothFactor = 1 / (smooth * 2)
     local delta = targetPos - currentPos
-    return currentPos + delta * math.min(smoothFactor / 10, 0.5)
+    return currentPos + delta * math.min(smoothFactor, 0.3)
 end
 
--- Mira automática (AUTO-LOCK)
+-- Mira automática
 local function AimAtTarget(t)
     local p = GetTargetPart(t)
     if not p then return end
@@ -815,28 +602,13 @@ local function AimAtTarget(t)
     local shake = ApplyShake()
     pos = pos + Vector3.new(shake.X, shake.Y, 0)
     
-    -- Verifica deadzone
-    local screenPos, onScreen = Camera:WorldToViewportPoint(pos)
-    if onScreen then
-        local center = GetViewportCenter()
-        local currentScreenPos = Vector2.new(screenPos.X, screenPos.Y)
-        local distanceToCenter = (currentScreenPos - center).Magnitude
-        
-        if distanceToCenter < GetConfig().Deadzone then
-            return -- Dentro da deadzone, não mexe
-        end
-    end
-    
-    -- Calcula novo CFrame da câmera
     local currentCF = Camera.CFrame
     local targetCF = CFrame.lookAt(currentCF.Position, pos)
-    
-    -- Aplica smooth
     local newCF = SmoothAim(currentCF, targetCF)
     Camera.CFrame = newCF
 end
 
--- Melhor alvo (mais próximo do centro da tela)
+-- Melhor alvo
 local function GetBestTarget()
     local cfg = GetConfig()
     local best = nil
@@ -844,13 +616,10 @@ local function GetBestTarget()
     
     for _, p in ipairs(Players:GetPlayers()) do
         if p ~= LocalPlayer and IsAlive(p) and not IsTeammate(p) then
-            local targetPart = GetTargetPart(p)
-            if targetPart and (not cfg.WallCheck or IsVisible(targetPart)) then
-                local angle = GetAngleToTarget(p)
-                if angle < bestAngle then
-                    bestAngle = angle
-                    best = p
-                end
+            local angle = GetAngleToTarget(p)
+            if angle < bestAngle then
+                bestAngle = angle
+                best = p
             end
         end
     end
@@ -861,195 +630,124 @@ end
 local function DoAutoShoot()
     local cfg = GetConfig()
     if not cfg.AutoShoot or not CurrentTarget then return end
-    if GetAngleToTarget(CurrentTarget) <= cfg.FOV then
-        local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
-        if tool then
-            tool:Activate()
-        end
+    
+    local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+    if tool then
+        tool:Activate()
     end
 end
 
 -- FOV Circle
 local function CreateFOVCircle()
-    if FOVCircle then FOVCircle:Destroy() end
+    if FOVCircle and FOVCircle.Parent then FOVCircle:Destroy() end
+    
     local sg = Instance.new("ScreenGui")
-    sg.Name = "FOVCircle"
+    sg.Name = "FOVCircleGUI"
     sg.Parent = game:GetService("CoreGui")
+    sg.ResetOnSpawn = false
+    
     FOVCircle = Instance.new("Frame")
-    FOVCircle.BackgroundTransparency = 0.7
+    FOVCircle.Name = "FOVCircle"
+    FOVCircle.BackgroundTransparency = 0.85
     FOVCircle.BorderSizePixel = 2
+    FOVCircle.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
     FOVCircle.Parent = sg
-    local c = Instance.new("UICorner")
-    c.CornerRadius = UDim.new(1, 0)
-    c.Parent = FOVCircle
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1, 0)
+    corner.Parent = FOVCircle
 end
 
 local function UpdateFOVCircle()
-    if not FOVCircle then return end
+    if not FOVCircle then CreateFOVCircle() end
     local cfg = GetConfig()
+    
     if not cfg.ShowFOV or not cfg.AimbotEnabled then
         FOVCircle.Visible = false
         return
     end
+    
     FOVCircle.Visible = true
-    FOVCircle.BorderColor3 = cfg.FOVColor or Color3.fromRGB(255, 0, 0)
+    if cfg.FOVColor then
+        FOVCircle.BorderColor3 = cfg.FOVColor
+    end
+    
     local fov = cfg.FOV
     FOVCircle.Size = UDim2.new(0, fov * 2, 0, fov * 2)
     FOVCircle.Position = UDim2.new(0.5, -fov, 0.5, -fov)
 end
 
--- Speed, Jump, Noclip, BHop, Fly
-local function ApplySpeed()
-    local cfg = GetConfig()
-    local char = LocalPlayer.Character
-    if not char then return end
-    local hum = char:FindFirstChild("Humanoid")
-    if hum then
-        hum.WalkSpeed = cfg.SpeedHackEnabled and cfg.WalkSpeed or 16
-    end
-end
-
-local function ApplyJumpPower()
-    local cfg = GetConfig()
-    local char = LocalPlayer.Character
-    if not char then return end
-    local hum = char:FindFirstChild("Humanoid")
-    if hum then
-        hum.JumpPower = cfg.JumpPowerEnabled and cfg.JumpPowerValue or 50
-    end
-end
-
-local function StartFly()
-    local cfg = GetConfig()
-    if not cfg.FlyEnabled or Flying then return end
-    
-    local char = LocalPlayer.Character
-    if not char then return end
-    
-    local hum = char:FindFirstChildWhichIsA("Humanoid")
-    local root = char:FindFirstChild("HumanoidRootPart")
-    if not root or not hum then return end
-    
-    Flying = true
-    local speed = cfg.FlySpeed
-    
-    FlyBodyGyro = Instance.new("BodyGyro")
-    FlyBodyVelocity = Instance.new("BodyVelocity")
-    FlyBodyGyro.P = 9e4
-    FlyBodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-    FlyBodyGyro.Parent = root
-    FlyBodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-    FlyBodyVelocity.Parent = root
-    hum.PlatformStand = true
-    
-    local flyConnection
-    flyConnection = RunService.Heartbeat:Connect(function()
-        local cfgNow = GetConfig()
-        if not cfgNow.FlyEnabled then
-            if FlyBodyGyro then FlyBodyGyro:Destroy() end
-            if FlyBodyVelocity then FlyBodyVelocity:Destroy() end
-            if hum then hum.PlatformStand = false end
-            Flying = false
-            flyConnection:Disconnect()
-            return
-        end
-        
-        local currentChar = LocalPlayer.Character
-        if not currentChar then return end
-        
-        local currentRoot = currentChar:FindFirstChild("HumanoidRootPart")
-        local currentHum = currentChar:FindFirstChildWhichIsA("Humanoid")
-        if not currentRoot or not currentHum then return end
-        
-        local cam = workspace.CurrentCamera
-        local moveDir = Vector3.zero
-        
-        if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.CFrame.LookVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.CFrame.LookVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.CFrame.RightVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.CFrame.RightVector end
-        if UserInputService:IsKeyDown(Enum.KeyCode.Space) then moveDir = moveDir + Vector3.new(0, 1, 0) end
-        if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then moveDir = moveDir - Vector3.new(0, 1, 0) end
-        
-        if moveDir.Magnitude > 0 then
-            moveDir = moveDir.Unit * cfgNow.FlySpeed
-        end
-        
-        FlyBodyVelocity.Velocity = moveDir
-        FlyBodyGyro.CFrame = cam.CFrame
-    end)
-end
-
-local function StartBHop()
-    local cfg = GetConfig()
-    if not cfg.BHopEnabled then return end
-    
-    local bhopConn
-    bhopConn = RunService.RenderStepped:Connect(function()
-        local cfgNow = GetConfig()
-        if not cfgNow.BHopEnabled then
-            bhopConn:Disconnect()
-            return
-        end
-        
-        local char = LocalPlayer.Character
-        if not char then return end
-        local hum = char:FindFirstChild("Humanoid")
-        if not hum then return end
-        
-        local isGrounded = hum.FloorMaterial ~= Enum.Material.Air
-        if isGrounded and UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-            hum:ChangeState(Enum.HumanoidStateType.Jumping)
-        end
-    end)
-end
-
--- ESP Elements
-local HeadESPCircles = {}
-
+-- Head ESP
 local function UpdateHeadESP()
     local cfg = GetConfig()
     if not cfg.HeadESP then
         for _, c in pairs(HeadESPCircles) do
-            if c then c:Destroy() end
+            pcall(function() c:Destroy() end)
         end
         HeadESPCircles = {}
         return
     end
     
     for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and IsAlive(p) and not IsTeammate(p) then
-            local dist = (GetPart(p, "HumanoidRootPart") and GetPart(LocalPlayer, "HumanoidRootPart")) and 
-                        (GetPart(p, "HumanoidRootPart").Position - GetPart(LocalPlayer, "HumanoidRootPart").Position).Magnitude or 9999
-            if dist <= cfg.ESPDistance then
-                local head = GetPart(p, "Head")
-                if head and (not cfg.WallCheck or IsVisible(head)) then
-                    local pos, on = WorldToScreen(head.Position)
-                    if on then
-                        local circle = HeadESPCircles[p]
-                        if not circle then
-                            local sg = Instance.new("ScreenGui")
-                            sg.Name = "HeadESP_" .. p.Name
-                            sg.Parent = game:GetService("CoreGui")
-                            circle = Instance.new("Frame")
-                            circle.Size = UDim2.new(0, cfg.HeadESPSize, 0, cfg.HeadESPSize)
-                            circle.BackgroundTransparency = 0.5
-                            circle.BorderSizePixel = 2
-                            circle.Parent = sg
-                            local corner = Instance.new("UICorner")
-                            corner.CornerRadius = UDim.new(1, 0)
-                            corner.Parent = circle
-                            HeadESPCircles[p] = circle
-                        end
-                        circle.Position = UDim2.new(0, pos.X - cfg.HeadESPSize/2, 0, pos.Y - cfg.HeadESPSize/2)
-                        circle.BackgroundColor3 = cfg.HeadESPColor or Color3.fromRGB(255, 0, 0)
+        if p ~= LocalPlayer and IsAlive(p) then
+            local head = GetPart(p, "Head")
+            if head then
+                local pos, on = WorldToScreen(head.Position)
+                if on then
+                    local circle = HeadESPCircles[p]
+                    if not circle then
+                        local sg = Instance.new("ScreenGui")
+                        sg.Name = "HeadESP_" .. p.Name
+                        sg.Parent = game:GetService("CoreGui")
+                        sg.ResetOnSpawn = false
+                        
+                        circle = Instance.new("Frame")
                         circle.Size = UDim2.new(0, cfg.HeadESPSize, 0, cfg.HeadESPSize)
-                        circle.Visible = true
-                    elseif HeadESPCircles[p] then
-                        HeadESPCircles[p].Visible = false
+                        circle.BackgroundTransparency = 0.5
+                        circle.BorderSizePixel = 2
+                        circle.Parent = sg
+                        
+                        local corner = Instance.new("UICorner")
+                        corner.CornerRadius = UDim.new(1, 0)
+                        corner.Parent = circle
+                        
+                        HeadESPCircles[p] = circle
                     end
+                    circle.Position = UDim2.new(0, pos.X - cfg.HeadESPSize/2, 0, pos.Y - cfg.HeadESPSize/2)
+                    if cfg.HeadESPColor then
+                        circle.BackgroundColor3 = cfg.HeadESPColor
+                    end
+                    circle.Size = UDim2.new(0, cfg.HeadESPSize, 0, cfg.HeadESPSize)
+                    circle.Visible = true
+                elseif HeadESPCircles[p] then
+                    HeadESPCircles[p].Visible = false
                 end
             end
+        end
+    end
+end
+
+-- Speed e Jump
+local function ApplySpeedAndJump()
+    local cfg = GetConfig()
+    local char = LocalPlayer.Character
+    if not char then return end
+    local hum = char:FindFirstChild("Humanoid")
+    if hum then
+        hum.WalkSpeed = cfg.SpeedHackEnabled and cfg.WalkSpeed or 16
+        hum.JumpPower = cfg.JumpPowerEnabled and cfg.JumpPowerValue or 50
+    end
+end
+
+-- Noclip
+local function UpdateNoclip()
+    local cfg = GetConfig()
+    local char = LocalPlayer.Character
+    if not char then return end
+    
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = not cfg.NoclipEnabled
         end
     end
 end
@@ -1091,58 +789,29 @@ local function UpdateAntiAim()
     root.CFrame = CFrame.new(root.Position) * CFrame.Angles(math.rad(pitch), math.rad(yaw), 0)
 end
 
--- Loop principal (AUTO-LOCK)
+-- Inicializar
 CreateFOVCircle()
 
+-- Loop principal
 RunService.RenderStepped:Connect(function()
-    local cfg = GetConfig()
-    
     UpdateFOVCircle()
-    ApplySpeed()
-    ApplyJumpPower()
+    ApplySpeedAndJump()
+    UpdateNoclip()
     UpdateHeadESP()
     UpdateAntiAim()
     
-    -- Fly
-    if cfg.FlyEnabled and not Flying then
-        StartFly()
-    elseif not cfg.FlyEnabled and Flying then
-        Flying = false
-        if FlyBodyGyro then FlyBodyGyro:Destroy() end
-        if FlyBodyVelocity then FlyBodyVelocity:Destroy() end
-        local char = LocalPlayer.Character
-        if char and char:FindFirstChildWhichIsA("Humanoid") then
-            char:FindFirstChildWhichIsA("Humanoid").PlatformStand = false
-        end
-    end
+    local cfg = GetConfig()
     
-    -- BHop
-    if cfg.BHopEnabled then
-        StartBHop()
-    end
-    
-    -- Noclip
-    if cfg.NoclipEnabled then
-        local char = LocalPlayer.Character
-        if char then
-            for _, part in ipairs(char:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.CanCollide = false
-                end
-            end
-        end
-    end
-    
-    -- AIMBOT AUTO-LOCK (NÃO PRECISA DE KEYBIND)
     if cfg.AimbotEnabled then
         local best = GetBestTarget()
         
-        -- Sticky aim: mantém o mesmo alvo se ainda estiver vivo
         if cfg.StickyAim and CurrentTarget and IsAlive(CurrentTarget) then
-            best = CurrentTarget
-        else
-            CurrentTarget = best
+            if GetAngleToTarget(CurrentTarget) <= cfg.FOV then
+                best = CurrentTarget
+            end
         end
+        
+        CurrentTarget = best
         
         if CurrentTarget then
             local angle = GetAngleToTarget(CurrentTarget)
@@ -1151,9 +820,7 @@ RunService.RenderStepped:Connect(function()
                 DoAutoShoot()
             end
         end
-    else
-        CurrentTarget = nil
     end
 end)
 
-Library:Notification("Slip.wtf", "Loaded! Aimbot Auto-Lock Active", 5)
+Library:Notification("Slip.wtf", "Loaded! All pages working", 5)
