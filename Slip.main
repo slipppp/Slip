@@ -3,7 +3,7 @@ local Settings = loadstring(game:HttpGet("https://raw.githubusercontent.com/ImNo
 
 local Window = StellarHubMenu:Create({
     Title = 'Slip.wtf',
-    Size = UDim2.new(0, 500, 0, 600),
+    Size = UDim2.new(0, 400, 0, 300),
     Position = UDim2.new(0.5, 0, 0.5, 0),
     ShowOnCreate = true,
     PerformanceMode = false,
@@ -25,26 +25,25 @@ local Tabs = {
 local SettingsSections = Settings:InitializeSettingsTab(Window, 'SlipHub', 'Script')
 
 -- ==============================
--- AIMBOT (Main Tab)
+-- AIMBOT MOBILE (Auto Lock)
 -- ==============================
-local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Aimbot Settings')
+local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Aimbot')
 
 -- Aimbot Variables
 local aimbotEnabled = false
-local aimbotKey = "MB2"
+local currentTarget = nil
 local aimPart = "Head"
-local aimFOV = 100
-local aimSmoothness = 5
+local aimFOV = 200
 local aimTeamCheck = false
 local aimWallCheck = false
-local aimLock = false
 
 -- Get players function
 local function GetPlayers()
     local players = {}
+    local localPlayer = game:GetService("Players").LocalPlayer
     for _, v in pairs(game:GetService("Players"):GetPlayers()) do
-        if v ~= game:GetService("Players").LocalPlayer then
-            if not aimTeamCheck or v.Team ~= game:GetService("Players").LocalPlayer.Team then
+        if v ~= localPlayer then
+            if not aimTeamCheck or v.Team ~= localPlayer.Team then
                 table.insert(players, v)
             end
         end
@@ -52,18 +51,18 @@ local function GetPlayers()
     return players
 end
 
--- Get Closest Player to Mouse
-local function GetClosestPlayer()
-    local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+-- Get Closest Player to Center of Screen (Mobile)
+local function GetClosestPlayerToCenter()
     local closestPlayer = nil
     local shortestDistance = aimFOV
-
+    local centerScreen = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y / 2)
+    
     for _, player in pairs(GetPlayers()) do
         if player.Character and player.Character:FindFirstChild(aimPart) then
             local part = player.Character[aimPart]
             local vector, onScreen = workspace.CurrentCamera:WorldToViewportPoint(part.Position)
             if onScreen then
-                local distance = (Vector2.new(mouse.X, mouse.Y) - Vector2.new(vector.X, vector.Y)).Magnitude
+                local distance = (centerScreen - Vector2.new(vector.X, vector.Y)).Magnitude
                 if distance < shortestDistance then
                     shortestDistance = distance
                     closestPlayer = player
@@ -74,40 +73,42 @@ local function GetClosestPlayer()
     return closestPlayer
 end
 
--- Aimbot Function
-local function DoAimbot()
-    if not aimbotEnabled then return end
+-- Wall Check
+local function CanSee(target)
+    if not aimWallCheck then return true end
     
-    local mouse = game:GetService("Players").LocalPlayer:GetMouse()
-    local target = GetClosestPlayer()
+    local origin = workspace.CurrentCamera.CFrame.Position
+    local targetPart = target.Character and target.Character:FindFirstChild(aimPart)
+    if not targetPart then return false end
     
-    if target and target.Character and target.Character:FindFirstChild(aimPart) then
-        local part = target.Character[aimPart]
-        if aimWallCheck then
-            local origin = workspace.CurrentCamera.CFrame.Position
-            local direction = (part.Position - origin).unit * (part.Position - origin).Magnitude
-            local ray = Ray.new(origin, direction)
-            local hit, pos = workspace:FindPartOnRay(ray, game:GetService("Players").LocalPlayer.Character)
-            if hit and not hit:IsDescendantOf(target.Character) then
-                return
-            end
-        end
+    local direction = (targetPart.Position - origin).unit * (targetPart.Position - origin).Magnitude
+    local ray = Ray.new(origin, direction)
+    local hit, pos = workspace:FindPartOnRay(ray, game:GetService("Players").LocalPlayer.Character)
+    
+    if hit and not hit:IsDescendantOf(target.Character) then
+        return false
+    end
+    return true
+end
+
+-- Auto Aimbot Loop (Mobile)
+local function AutoAimbot()
+    while aimbotEnabled and task.wait(0.016) do -- ~60 FPS
+        if not aimbotEnabled then break end
         
-        local targetPos = workspace.CurrentCamera:WorldToViewportPoint(part.Position)
-        if targetPos then
-            local mousePos = Vector2.new(mouse.X, mouse.Y)
-            local targetScreenPos = Vector2.new(targetPos.X, targetPos.Y)
-            local delta = targetScreenPos - mousePos
+        local target = GetClosestPlayerToCenter()
+        
+        if target and target.Character and target.Character:FindFirstChild(aimPart) and CanSee(target) then
+            local part = target.Character[aimPart]
+            local targetPos = workspace.CurrentCamera:WorldToViewportPoint(part.Position)
+            local centerScreen = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y / 2)
+            local currentPos = Vector2.new(targetPos.X, targetPos.Y)
             
-            if aimSmoothness > 0 then
-                mousemoverel(delta.X / aimSmoothness, delta.Y / aimSmoothness)
-            else
-                mousemoverel(delta.X, delta.Y)
-            end
-            
-            if aimLock then
-                task.wait()
-                DoAimbot()
+            -- Move camera towards target
+            local delta = currentPos - centerScreen
+            if delta.Magnitude > 5 then
+                game:GetService("Players").LocalPlayer.Character.Humanoid.CameraOffset = Vector3.new(0, 0, 0)
+                workspace.CurrentCamera.CFrame = workspace.CurrentCamera.CFrame * CFrame.new(-delta.X / 200, -delta.Y / 200, 0)
             end
         end
     end
@@ -115,34 +116,21 @@ end
 
 -- Aimbot Toggle
 LeftGroupBox:AddToggle('AimbotEnabled', {
-    Text = 'Enable Aimbot',
+    Text = 'Enable Aimbot (Auto Lock)',
     Default = false,
-    Tooltip = 'Toggle aimbot on/off',
+    Tooltip = 'Automatically locks onto enemies',
     Callback = function(Value)
         aimbotEnabled = Value
-    end
-})
-
--- Aimbot Keybind
-LeftGroupBox:AddKeybind('AimbotKey', {
-    Title = 'Aimbot Key',
-    Default = 'MB2',
-    Mode = 'Hold',
-    Tooltip = 'Key to activate aimbot',
-    Callback = function(Value)
-        if Value and aimbotEnabled then
-            DoAimbot()
+        if Value then
+            task.spawn(AutoAimbot)
         end
-    end,
-    ChangedCallback = function(New)
-        aimbotKey = New
     end
 })
 
 -- Aim Part Dropdown
 LeftGroupBox:AddDropdown('AimPart', {
     Text = 'Aim Part',
-    Values = {'Head', 'HumanoidRootPart', 'Torso', 'UpperTorso'},
+    Values = {'Head', 'HumanoidRootPart', 'UpperTorso'},
     Default = 1,
     Multi = false,
     Tooltip = 'Which body part to aim at',
@@ -154,35 +142,19 @@ LeftGroupBox:AddDropdown('AimPart', {
 -- FOV Slider
 LeftGroupBox:AddSlider('AimFOV', {
     Text = 'Aimbot FOV',
-    Default = 100,
+    Default = 200,
     Min = 50,
-    Max = 300,
+    Max = 500,
     Rounding = 0,
     Suffix = 'px',
-    Tooltip = 'Field of view for aimbot detection',
+    Tooltip = 'Field of view for auto lock',
     Callback = function(Value)
         aimFOV = Value
     end
 })
 
--- Smoothness Slider
-LeftGroupBox:AddSlider('AimSmoothness', {
-    Text = 'Smoothness',
-    Default = 5,
-    Min = 1,
-    Max = 20,
-    Rounding = 0,
-    Suffix = '',
-    Tooltip = 'How smooth the aimbot moves (lower = faster)',
-    Callback = function(Value)
-        aimSmoothness = Value
-    end
-})
-
--- Additional Aimbot Options
-local aimbotGroup = Tabs.Main:AddRightGroupbox('Advanced Options')
-
-aimbotGroup:AddToggle('TeamCheck', {
+-- Team Check
+LeftGroupBox:AddToggle('TeamCheck', {
     Text = 'Team Check',
     Default = false,
     Tooltip = 'Ignore teammates',
@@ -191,28 +163,20 @@ aimbotGroup:AddToggle('TeamCheck', {
     end
 })
 
-aimbotGroup:AddToggle('WallCheck', {
+-- Wall Check
+LeftGroupBox:AddToggle('WallCheck', {
     Text = 'Wall Check',
     Default = false,
-    Tooltip = 'Only aim if target is visible',
+    Tooltip = 'Only lock if visible',
     Callback = function(Value)
         aimWallCheck = Value
-    end
-})
-
-aimbotGroup:AddToggle('AimLock', {
-    Text = 'Aim Lock',
-    Default = false,
-    Tooltip = 'Continuously lock onto target',
-    Callback = function(Value)
-        aimLock = Value
     end
 })
 
 -- ==============================
 -- ESP (Visual Tab)
 -- ==============================
-local espGroup = Tabs.Visual:AddLeftGroupbox('ESP Settings')
+local espGroup = Tabs.Visual:AddLeftGroupbox('ESP')
 
 -- ESP Variables
 local espEnabled = false
@@ -292,8 +256,8 @@ espGroup:AddToggle('ShowTracerESP', {
     end
 })
 
--- ESP Colors Section
-local colorGroup = Tabs.Visual:AddRightGroupbox('ESP Colors')
+-- ESP Colors
+local colorGroup = Tabs.Visual:AddRightGroupbox('Colors')
 
 -- Box Color
 colorGroup:AddLabel('Box Color'):AddColorPicker('BoxColor', {
@@ -322,14 +286,14 @@ colorGroup:AddLabel('Tracer Color'):AddColorPicker('TracerColor', {
     end
 })
 
--- ESP Advanced Settings
-local advancedGroup = Tabs.Visual:AddRightGroupbox('Advanced ESP')
+-- Advanced ESP
+local advancedGroup = Tabs.Visual:AddRightGroupbox('Advanced')
 
 -- Team Check ESP
 advancedGroup:AddToggle('TeamCheckESP', {
     Text = 'Team Check',
     Default = false,
-    Tooltip = 'Don\'t show ESP on teammates',
+    Tooltip = 'No ESP on teammates',
     Callback = function(Value)
         teamCheckESP = Value
         ESP.Teamcheck = Value
@@ -340,25 +304,25 @@ advancedGroup:AddToggle('TeamCheckESP', {
 advancedGroup:AddToggle('WallCheckESP', {
     Text = 'Wall Check',
     Default = false,
-    Tooltip = 'Only show ESP if visible',
+    Tooltip = 'Only show if visible',
     Callback = function(Value)
         ESP.WallCheck = Value
     end
 })
 
--- Tracer Position Dropdown
+-- Tracer Position
 advancedGroup:AddDropdown('TracerPosition', {
     Text = 'Tracer Position',
     Values = {'Bottom', 'Top', 'Mouse'},
     Default = 1,
     Multi = false,
-    Tooltip = 'Where tracers originate from',
+    Tooltip = 'Where tracers come from',
     Callback = function(Value)
         ESP.TracerPosition = Value
     end
 })
 
--- Tracer Thickness Slider
+-- Tracer Thickness
 advancedGroup:AddSlider('TracerThickness', {
     Text = 'Tracer Thickness',
     Default = 2,
@@ -366,13 +330,12 @@ advancedGroup:AddSlider('TracerThickness', {
     Max = 5,
     Rounding = 0,
     Suffix = 'px',
-    Tooltip = 'Thickness of tracer lines',
     Callback = function(Value)
         ESP.TracerThickness = Value
     end
 })
 
--- Apply Default ESP Settings
+-- Default ESP Settings
 ESP.Enabled = false
 ESP.ShowBox = false
 ESP.ShowName = false
@@ -388,9 +351,9 @@ ESP.TracerThickness = 2
 ESP.TracerPosition = "Bottom"
 
 -- ==============================
--- Notifications & Unload
+-- Notifications
 -- ==============================
-Settings:Notify('Slip.wtf Loaded! | Aimbot & ESP Ready', 5)
+Settings:Notify('Slip.wtf Loaded! | Mobile Aimbot Ready', 5)
 
 Settings:OnUnload(function()
     print('Script unloaded!')
